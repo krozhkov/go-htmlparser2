@@ -1,0 +1,3903 @@
+[TestEvents/</title>_in_<script>_(#745) - 1]
+[]parser.TestEvent{
+    {
+        event: "opentagname",
+        data:  {
+            "script",
+        },
+        endIndex:   7,
+        startIndex: 0,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "script",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   7,
+        startIndex: 0,
+    },
+    {
+        event: "text",
+        data:  {
+            "'</title>'",
+        },
+        endIndex:   17,
+        startIndex: 8,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "script",
+            bool(false),
+        },
+        endIndex:   26,
+        startIndex: 18,
+    },
+}
+---
+
+[TestEvents/Attribute_in_XML_(see_#1350) - 1]
+[]parser.TestEvent{
+    {
+        event: "opentagname",
+        data:  {
+            "Page",
+        },
+        endIndex:   5,
+        startIndex: 0,
+    },
+    {
+        event: "attribute",
+        data:  {
+            "title",
+            "Hello world",
+            parser.QuoteType(3),
+        },
+        endIndex:   29,
+        startIndex: 10,
+    },
+    {
+        event: "attribute",
+        data:  {
+            "actionBarVisible",
+            "false",
+            parser.QuoteType(3),
+        },
+        endIndex:   58,
+        startIndex: 34,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "Page",
+            []*parser.Attribute{
+                &parser.Attribute{Name:"title", Value:"Hello world"},
+                &parser.Attribute{Name:"actionBarVisible", Value:"false"},
+            },
+            bool(false),
+        },
+        endIndex:   59,
+        startIndex: 0,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "Page",
+            bool(true),
+        },
+        endIndex:   59,
+        startIndex: 0,
+    },
+}
+---
+
+[TestEvents/CDATA_(inside_special) - 1]
+[]parser.TestEvent{
+    {
+        event: "opentagname",
+        data:  {
+            "script",
+        },
+        endIndex:   7,
+        startIndex: 0,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "script",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   7,
+        startIndex: 0,
+    },
+    {
+        event: "text",
+        data:  {
+            "/*<![CDATA[*/ asdf ><asdf></adsf><> fo/*]]>*/",
+        },
+        endIndex:   52,
+        startIndex: 8,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "script",
+            bool(false),
+        },
+        endIndex:   61,
+        startIndex: 53,
+    },
+}
+---
+
+[TestEvents/CDATA - 1]
+[]parser.TestEvent{
+    {
+        event: "opentagname",
+        data:  {
+            "tag",
+        },
+        endIndex:   4,
+        startIndex: 0,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "tag",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   4,
+        startIndex: 0,
+    },
+    {
+        event: "cdatastart",
+        data:  {
+        },
+        endIndex:   41,
+        startIndex: 5,
+    },
+    {
+        event: "text",
+        data:  {
+            " asdf ><asdf></adsf><> fo",
+        },
+        endIndex:   41,
+        startIndex: 5,
+    },
+    {
+        event: "cdataend",
+        data:  {
+        },
+        endIndex:   41,
+        startIndex: 5,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "tag",
+            bool(false),
+        },
+        endIndex:   47,
+        startIndex: 42,
+    },
+    {
+        event: "processinginstruction",
+        data:  {
+            "![CD",
+            "![CD",
+        },
+        endIndex:   53,
+        startIndex: 48,
+    },
+}
+---
+
+[TestEvents/CDATA_edge-cases - 1]
+[]parser.TestEvent{
+    {
+        event: "processinginstruction",
+        data:  {
+            "![cdata",
+            "![CDATA",
+        },
+        endIndex:   8,
+        startIndex: 0,
+    },
+    {
+        event: "cdatastart",
+        data:  {
+        },
+        endIndex:   27,
+        startIndex: 9,
+    },
+    {
+        event: "text",
+        data:  {
+            "[]]sdaf",
+        },
+        endIndex:   27,
+        startIndex: 9,
+    },
+    {
+        event: "cdataend",
+        data:  {
+        },
+        endIndex:   27,
+        startIndex: 9,
+    },
+    {
+        event: "cdatastart",
+        data:  {
+        },
+        endIndex:   40,
+        startIndex: 28,
+    },
+    {
+        event: "text",
+        data:  {
+            "foo",
+        },
+        endIndex:   40,
+        startIndex: 28,
+    },
+    {
+        event: "cdataend",
+        data:  {
+        },
+        endIndex:   40,
+        startIndex: 28,
+    },
+}
+---
+
+[TestEvents/CDATA_in_HTML - 1]
+[]parser.TestEvent{
+    {
+        event: "comment",
+        data:  {
+            "[CDATA[ foo ]]",
+        },
+        endIndex:   16,
+        startIndex: 0,
+    },
+    {
+        event: "commentend",
+        data:  {
+        },
+        endIndex:   16,
+        startIndex: 0,
+    },
+}
+---
+
+[TestEvents/CDATA_more_edge-cases - 1]
+[]parser.TestEvent{
+    {
+        event: "cdatastart",
+        data:  {
+        },
+        endIndex:   23,
+        startIndex: 0,
+    },
+    {
+        event: "text",
+        data:  {
+            "foo]bar]>baz",
+        },
+        endIndex:   23,
+        startIndex: 0,
+    },
+    {
+        event: "cdataend",
+        data:  {
+        },
+        endIndex:   23,
+        startIndex: 0,
+    },
+}
+---
+
+[TestEvents/Comment_edge-cases - 1]
+[]parser.TestEvent{
+    {
+        event: "processinginstruction",
+        data:  {
+            "!-foo",
+            "!-foo",
+        },
+        endIndex:   6,
+        startIndex: 0,
+    },
+    {
+        event: "comment",
+        data:  {
+            " --- ",
+        },
+        endIndex:   18,
+        startIndex: 7,
+    },
+    {
+        event: "commentend",
+        data:  {
+        },
+        endIndex:   18,
+        startIndex: 7,
+    },
+    {
+        event: "comment",
+        data:  {
+            "foo",
+        },
+        endIndex:   26,
+        startIndex: 19,
+    },
+    {
+        event: "commentend",
+        data:  {
+        },
+        endIndex:   26,
+        startIndex: 19,
+    },
+}
+---
+
+[TestEvents/Comment_false_ending - 1]
+[]parser.TestEvent{
+    {
+        event: "comment",
+        data:  {
+            " a-b-> ",
+        },
+        endIndex:   13,
+        startIndex: 0,
+    },
+    {
+        event: "commentend",
+        data:  {
+        },
+        endIndex:   13,
+        startIndex: 0,
+    },
+}
+---
+
+[TestEvents/Empty_tag_name - 1]
+[]parser.TestEvent{
+    {
+        event: "text",
+        data:  {
+            "< ></ >",
+        },
+        endIndex:   6,
+        startIndex: 0,
+    },
+}
+---
+
+[TestEvents/Entities_in_attributes - 1]
+[]parser.TestEvent{
+    {
+        event: "opentagname",
+        data:  {
+            "foo",
+        },
+        endIndex:   4,
+        startIndex: 0,
+    },
+    {
+        event: "attribute",
+        data:  {
+            "bar",
+            "&",
+            parser.QuoteType(1),
+        },
+        endIndex:   14,
+        startIndex: 5,
+    },
+    {
+        event: "attribute",
+        data:  {
+            "baz",
+            "&",
+            parser.QuoteType(3),
+        },
+        endIndex:   26,
+        startIndex: 15,
+    },
+    {
+        event: "attribute",
+        data:  {
+            "boo",
+            "&",
+            parser.QuoteType(2),
+        },
+        endIndex:   38,
+        startIndex: 27,
+    },
+    {
+        event: "attribute",
+        data:  {
+            "noo",
+            "",
+            parser.QuoteType(1),
+        },
+        endIndex:   43,
+        startIndex: 39,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "foo",
+            []*parser.Attribute{
+                &parser.Attribute{Name:"bar", Value:"&"},
+                &parser.Attribute{Name:"baz", Value:"&"},
+                &parser.Attribute{Name:"boo", Value:"&"},
+                &parser.Attribute{Name:"noo", Value:""},
+            },
+            bool(false),
+        },
+        endIndex:   43,
+        startIndex: 0,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "foo",
+            bool(true),
+        },
+        endIndex:   44,
+        startIndex: 44,
+    },
+}
+---
+
+[TestEvents/Entity_after_< - 1]
+[]parser.TestEvent{
+    {
+        event: "text",
+        data:  {
+            "<&",
+        },
+        endIndex:   5,
+        startIndex: 0,
+    },
+}
+---
+
+[TestEvents/Implicit_close_tags - 1]
+[]parser.TestEvent{
+    {
+        event: "opentagname",
+        data:  {
+            "ol",
+        },
+        endIndex:   3,
+        startIndex: 0,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "ol",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   3,
+        startIndex: 0,
+    },
+    {
+        event: "opentagname",
+        data:  {
+            "li",
+        },
+        endIndex:   7,
+        startIndex: 4,
+    },
+    {
+        event: "attribute",
+        data:  {
+            "class",
+            "test",
+            parser.QuoteType(1),
+        },
+        endIndex:   18,
+        startIndex: 8,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "li",
+            []*parser.Attribute{
+                &parser.Attribute{Name:"class", Value:"test"},
+            },
+            bool(false),
+        },
+        endIndex:   18,
+        startIndex: 4,
+    },
+    {
+        event: "opentagname",
+        data:  {
+            "div",
+        },
+        endIndex:   23,
+        startIndex: 19,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "div",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   23,
+        startIndex: 19,
+    },
+    {
+        event: "opentagname",
+        data:  {
+            "table",
+        },
+        endIndex:   30,
+        startIndex: 24,
+    },
+    {
+        event: "attribute",
+        data:  {
+            "style",
+            "width:100%",
+            parser.QuoteType(1),
+        },
+        endIndex:   47,
+        startIndex: 31,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "table",
+            []*parser.Attribute{
+                &parser.Attribute{Name:"style", Value:"width:100%"},
+            },
+            bool(false),
+        },
+        endIndex:   47,
+        startIndex: 24,
+    },
+    {
+        event: "opentagname",
+        data:  {
+            "tr",
+        },
+        endIndex:   51,
+        startIndex: 48,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "tr",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   51,
+        startIndex: 48,
+    },
+    {
+        event: "opentagname",
+        data:  {
+            "th",
+        },
+        endIndex:   55,
+        startIndex: 52,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "th",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   55,
+        startIndex: 52,
+    },
+    {
+        event: "text",
+        data:  {
+            "TH",
+        },
+        endIndex:   57,
+        startIndex: 56,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "th",
+            bool(true),
+        },
+        endIndex:   61,
+        startIndex: 58,
+    },
+    {
+        event: "opentagname",
+        data:  {
+            "td",
+        },
+        endIndex:   61,
+        startIndex: 58,
+    },
+    {
+        event: "attribute",
+        data:  {
+            "colspan",
+            "2",
+            parser.QuoteType(1),
+        },
+        endIndex:   71,
+        startIndex: 62,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "td",
+            []*parser.Attribute{
+                &parser.Attribute{Name:"colspan", Value:"2"},
+            },
+            bool(false),
+        },
+        endIndex:   71,
+        startIndex: 58,
+    },
+    {
+        event: "opentagname",
+        data:  {
+            "h3",
+        },
+        endIndex:   75,
+        startIndex: 72,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "h3",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   75,
+        startIndex: 72,
+    },
+    {
+        event: "text",
+        data:  {
+            "Heading",
+        },
+        endIndex:   82,
+        startIndex: 76,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "h3",
+            bool(false),
+        },
+        endIndex:   87,
+        startIndex: 83,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "td",
+            bool(true),
+        },
+        endIndex:   91,
+        startIndex: 88,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "tr",
+            bool(true),
+        },
+        endIndex:   91,
+        startIndex: 88,
+    },
+    {
+        event: "opentagname",
+        data:  {
+            "tr",
+        },
+        endIndex:   91,
+        startIndex: 88,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "tr",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   91,
+        startIndex: 88,
+    },
+    {
+        event: "opentagname",
+        data:  {
+            "td",
+        },
+        endIndex:   95,
+        startIndex: 92,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "td",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   95,
+        startIndex: 92,
+    },
+    {
+        event: "opentagname",
+        data:  {
+            "div",
+        },
+        endIndex:   100,
+        startIndex: 96,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "div",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   100,
+        startIndex: 96,
+    },
+    {
+        event: "text",
+        data:  {
+            "Div",
+        },
+        endIndex:   103,
+        startIndex: 101,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "div",
+            bool(false),
+        },
+        endIndex:   109,
+        startIndex: 104,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "td",
+            bool(true),
+        },
+        endIndex:   113,
+        startIndex: 110,
+    },
+    {
+        event: "opentagname",
+        data:  {
+            "td",
+        },
+        endIndex:   113,
+        startIndex: 110,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "td",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   113,
+        startIndex: 110,
+    },
+    {
+        event: "opentagname",
+        data:  {
+            "div",
+        },
+        endIndex:   118,
+        startIndex: 114,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "div",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   118,
+        startIndex: 114,
+    },
+    {
+        event: "text",
+        data:  {
+            "Div2",
+        },
+        endIndex:   122,
+        startIndex: 119,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "div",
+            bool(false),
+        },
+        endIndex:   128,
+        startIndex: 123,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "td",
+            bool(true),
+        },
+        endIndex:   136,
+        startIndex: 129,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "tr",
+            bool(true),
+        },
+        endIndex:   136,
+        startIndex: 129,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "table",
+            bool(false),
+        },
+        endIndex:   136,
+        startIndex: 129,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "div",
+            bool(false),
+        },
+        endIndex:   142,
+        startIndex: 137,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "li",
+            bool(true),
+        },
+        endIndex:   146,
+        startIndex: 143,
+    },
+    {
+        event: "opentagname",
+        data:  {
+            "li",
+        },
+        endIndex:   146,
+        startIndex: 143,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "li",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   146,
+        startIndex: 143,
+    },
+    {
+        event: "opentagname",
+        data:  {
+            "div",
+        },
+        endIndex:   151,
+        startIndex: 147,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "div",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   151,
+        startIndex: 147,
+    },
+    {
+        event: "opentagname",
+        data:  {
+            "h3",
+        },
+        endIndex:   155,
+        startIndex: 152,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "h3",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   155,
+        startIndex: 152,
+    },
+    {
+        event: "text",
+        data:  {
+            "Heading 2",
+        },
+        endIndex:   164,
+        startIndex: 156,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "h3",
+            bool(false),
+        },
+        endIndex:   169,
+        startIndex: 165,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "div",
+            bool(false),
+        },
+        endIndex:   175,
+        startIndex: 170,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "li",
+            bool(false),
+        },
+        endIndex:   180,
+        startIndex: 176,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "ol",
+            bool(false),
+        },
+        endIndex:   185,
+        startIndex: 181,
+    },
+    {
+        event: "opentagname",
+        data:  {
+            "p",
+        },
+        endIndex:   188,
+        startIndex: 186,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "p",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   188,
+        startIndex: 186,
+    },
+    {
+        event: "text",
+        data:  {
+            "Para",
+        },
+        endIndex:   192,
+        startIndex: 189,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "p",
+            bool(true),
+        },
+        endIndex:   196,
+        startIndex: 193,
+    },
+    {
+        event: "opentagname",
+        data:  {
+            "h4",
+        },
+        endIndex:   196,
+        startIndex: 193,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "h4",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   196,
+        startIndex: 193,
+    },
+    {
+        event: "text",
+        data:  {
+            "Heading 4",
+        },
+        endIndex:   205,
+        startIndex: 197,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "h4",
+            bool(false),
+        },
+        endIndex:   210,
+        startIndex: 206,
+    },
+    {
+        event: "opentagname",
+        data:  {
+            "p",
+        },
+        endIndex:   213,
+        startIndex: 211,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "p",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   213,
+        startIndex: 211,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "p",
+            bool(true),
+        },
+        endIndex:   217,
+        startIndex: 214,
+    },
+    {
+        event: "opentagname",
+        data:  {
+            "ul",
+        },
+        endIndex:   217,
+        startIndex: 214,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "ul",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   217,
+        startIndex: 214,
+    },
+    {
+        event: "opentagname",
+        data:  {
+            "li",
+        },
+        endIndex:   221,
+        startIndex: 218,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "li",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   221,
+        startIndex: 218,
+    },
+    {
+        event: "text",
+        data:  {
+            "Hi",
+        },
+        endIndex:   223,
+        startIndex: 222,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "li",
+            bool(true),
+        },
+        endIndex:   227,
+        startIndex: 224,
+    },
+    {
+        event: "opentagname",
+        data:  {
+            "li",
+        },
+        endIndex:   227,
+        startIndex: 224,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "li",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   227,
+        startIndex: 224,
+    },
+    {
+        event: "text",
+        data:  {
+            "bye",
+        },
+        endIndex:   230,
+        startIndex: 228,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "li",
+            bool(true),
+        },
+        endIndex:   235,
+        startIndex: 231,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "ul",
+            bool(false),
+        },
+        endIndex:   235,
+        startIndex: 231,
+    },
+}
+---
+
+[TestEvents/Implicit_open_p_and_br_tags - 1]
+[]parser.TestEvent{
+    {
+        event: "opentagname",
+        data:  {
+            "div",
+        },
+        endIndex:   4,
+        startIndex: 0,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "div",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   4,
+        startIndex: 0,
+    },
+    {
+        event: "text",
+        data:  {
+            "Hallo",
+        },
+        endIndex:   9,
+        startIndex: 5,
+    },
+    {
+        event: "opentagname",
+        data:  {
+            "p",
+        },
+        endIndex:   13,
+        startIndex: 10,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "p",
+            []*parser.Attribute{
+            },
+            bool(true),
+        },
+        endIndex:   13,
+        startIndex: 10,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "p",
+            bool(false),
+        },
+        endIndex:   13,
+        startIndex: 10,
+    },
+    {
+        event: "text",
+        data:  {
+            "World",
+        },
+        endIndex:   18,
+        startIndex: 14,
+    },
+    {
+        event: "opentagname",
+        data:  {
+            "br",
+        },
+        endIndex:   23,
+        startIndex: 19,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "br",
+            []*parser.Attribute(nil),
+            bool(true),
+        },
+        endIndex:   23,
+        startIndex: 19,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "br",
+            bool(false),
+        },
+        endIndex:   23,
+        startIndex: 19,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "div",
+            bool(false),
+        },
+        endIndex:   38,
+        startIndex: 33,
+    },
+    {
+        event: "opentagname",
+        data:  {
+            "p",
+        },
+        endIndex:   42,
+        startIndex: 39,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "p",
+            []*parser.Attribute{
+            },
+            bool(true),
+        },
+        endIndex:   42,
+        startIndex: 39,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "p",
+            bool(false),
+        },
+        endIndex:   42,
+        startIndex: 39,
+    },
+    {
+        event: "opentagname",
+        data:  {
+            "br",
+        },
+        endIndex:   47,
+        startIndex: 43,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "br",
+            []*parser.Attribute(nil),
+            bool(true),
+        },
+        endIndex:   47,
+        startIndex: 43,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "br",
+            bool(false),
+        },
+        endIndex:   47,
+        startIndex: 43,
+    },
+}
+---
+
+[TestEvents/Long_CDATA_ending - 1]
+[]parser.TestEvent{
+    {
+        event: "opentagname",
+        data:  {
+            "before",
+        },
+        endIndex:   7,
+        startIndex: 0,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "before",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   9,
+        startIndex: 0,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "before",
+            bool(true),
+        },
+        endIndex:   9,
+        startIndex: 0,
+    },
+    {
+        event: "opentagname",
+        data:  {
+            "tag",
+        },
+        endIndex:   14,
+        startIndex: 10,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "tag",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   14,
+        startIndex: 10,
+    },
+    {
+        event: "cdatastart",
+        data:  {
+        },
+        endIndex:   33,
+        startIndex: 15,
+    },
+    {
+        event: "text",
+        data:  {
+            " text ]",
+        },
+        endIndex:   33,
+        startIndex: 15,
+    },
+    {
+        event: "cdataend",
+        data:  {
+        },
+        endIndex:   33,
+        startIndex: 15,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "tag",
+            bool(false),
+        },
+        endIndex:   39,
+        startIndex: 34,
+    },
+    {
+        event: "opentagname",
+        data:  {
+            "after",
+        },
+        endIndex:   46,
+        startIndex: 40,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "after",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   48,
+        startIndex: 40,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "after",
+            bool(true),
+        },
+        endIndex:   48,
+        startIndex: 40,
+    },
+}
+---
+
+[TestEvents/Long_comment_ending - 1]
+[]parser.TestEvent{
+    {
+        event: "opentagname",
+        data:  {
+            "meta",
+        },
+        endIndex:   5,
+        startIndex: 0,
+    },
+    {
+        event: "attribute",
+        data:  {
+            "id",
+            "before",
+            parser.QuoteType(2),
+        },
+        endIndex:   17,
+        startIndex: 6,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "meta",
+            []*parser.Attribute{
+                &parser.Attribute{Name:"id", Value:"before"},
+            },
+            bool(false),
+        },
+        endIndex:   17,
+        startIndex: 0,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "meta",
+            bool(true),
+        },
+        endIndex:   17,
+        startIndex: 0,
+    },
+    {
+        event: "comment",
+        data:  {
+            " text -",
+        },
+        endIndex:   31,
+        startIndex: 18,
+    },
+    {
+        event: "commentend",
+        data:  {
+        },
+        endIndex:   31,
+        startIndex: 18,
+    },
+    {
+        event: "opentagname",
+        data:  {
+            "meta",
+        },
+        endIndex:   37,
+        startIndex: 32,
+    },
+    {
+        event: "attribute",
+        data:  {
+            "id",
+            "after",
+            parser.QuoteType(2),
+        },
+        endIndex:   48,
+        startIndex: 38,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "meta",
+            []*parser.Attribute{
+                &parser.Attribute{Name:"id", Value:"after"},
+            },
+            bool(false),
+        },
+        endIndex:   48,
+        startIndex: 32,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "meta",
+            bool(true),
+        },
+        endIndex:   48,
+        startIndex: 32,
+    },
+}
+---
+
+[TestEvents/Lowercase_tags - 1]
+[]parser.TestEvent{
+    {
+        event: "opentagname",
+        data:  {
+            "h1",
+        },
+        endIndex:   3,
+        startIndex: 0,
+    },
+    {
+        event: "attribute",
+        data:  {
+            "class",
+            "test",
+            parser.QuoteType(1),
+        },
+        endIndex:   14,
+        startIndex: 4,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "h1",
+            []*parser.Attribute{
+                &parser.Attribute{Name:"class", Value:"test"},
+            },
+            bool(false),
+        },
+        endIndex:   14,
+        startIndex: 0,
+    },
+    {
+        event: "text",
+        data:  {
+            "adsf",
+        },
+        endIndex:   18,
+        startIndex: 15,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "h1",
+            bool(false),
+        },
+        endIndex:   23,
+        startIndex: 19,
+    },
+}
+---
+
+[TestEvents/Multi-byte_entity - 1]
+[]parser.TestEvent{
+    {
+        event: "text",
+        data:  {
+            "≧̸",
+        },
+        endIndex:   20,
+        startIndex: 0,
+    },
+}
+---
+
+[TestEvents/Not_quite_closed - 1]
+[]parser.TestEvent{
+    {
+        event: "opentagname",
+        data:  {
+            "foo",
+        },
+        endIndex:   4,
+        startIndex: 0,
+    },
+    {
+        event: "attribute",
+        data:  {
+            "bar",
+            "",
+        },
+        endIndex:   9,
+        startIndex: 6,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "foo",
+            []*parser.Attribute{
+                &parser.Attribute{Name:"bar", Value:""},
+            },
+            bool(false),
+        },
+        endIndex:   9,
+        startIndex: 0,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "foo",
+            bool(false),
+        },
+        endIndex:   15,
+        startIndex: 10,
+    },
+}
+---
+
+[TestEvents/Scripts_creating_other_scripts - 1]
+[]parser.TestEvent{
+    {
+        event: "opentagname",
+        data:  {
+            "p",
+        },
+        endIndex:   2,
+        startIndex: 0,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "p",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   2,
+        startIndex: 0,
+    },
+    {
+        event: "opentagname",
+        data:  {
+            "script",
+        },
+        endIndex:   10,
+        startIndex: 3,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "script",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   10,
+        startIndex: 3,
+    },
+    {
+        event: "text",
+        data:  {
+            "var str = '<script></'+'script>';",
+        },
+        endIndex:   43,
+        startIndex: 11,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "script",
+            bool(false),
+        },
+        endIndex:   52,
+        startIndex: 44,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "p",
+            bool(false),
+        },
+        endIndex:   56,
+        startIndex: 53,
+    },
+}
+---
+
+[TestEvents/Scripts_ending_with_< - 1]
+[]parser.TestEvent{
+    {
+        event: "opentagname",
+        data:  {
+            "script",
+        },
+        endIndex:   7,
+        startIndex: 0,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "script",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   7,
+        startIndex: 0,
+    },
+    {
+        event: "text",
+        data:  {
+            "<",
+        },
+        endIndex:   8,
+        startIndex: 8,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "script",
+            bool(false),
+        },
+        endIndex:   17,
+        startIndex: 9,
+    },
+}
+---
+
+[TestEvents/Self-closing_indices_(#941) - 1]
+[]parser.TestEvent{
+    {
+        event: "opentagname",
+        data:  {
+            "xml",
+        },
+        endIndex:   4,
+        startIndex: 0,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "xml",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   4,
+        startIndex: 0,
+    },
+    {
+        event: "opentagname",
+        data:  {
+            "a",
+        },
+        endIndex:   7,
+        startIndex: 5,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "a",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   8,
+        startIndex: 5,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "a",
+            bool(true),
+        },
+        endIndex:   8,
+        startIndex: 5,
+    },
+    {
+        event: "opentagname",
+        data:  {
+            "b",
+        },
+        endIndex:   11,
+        startIndex: 9,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "b",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   12,
+        startIndex: 9,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "b",
+            bool(true),
+        },
+        endIndex:   12,
+        startIndex: 9,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "xml",
+            bool(false),
+        },
+        endIndex:   18,
+        startIndex: 13,
+    },
+}
+---
+
+[TestEvents/Special_special_tags - 1]
+[]parser.TestEvent{
+    {
+        event: "opentagname",
+        data:  {
+            "title",
+        },
+        endIndex:   6,
+        startIndex: 0,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "title",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   6,
+        startIndex: 0,
+    },
+    {
+        event: "text",
+        data:  {
+            "<b>foo</b><title>",
+        },
+        endIndex:   23,
+        startIndex: 7,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "title",
+            bool(false),
+        },
+        endIndex:   31,
+        startIndex: 24,
+    },
+    {
+        event: "opentagname",
+        data:  {
+            "sitle",
+        },
+        endIndex:   38,
+        startIndex: 32,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "sitle",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   38,
+        startIndex: 32,
+    },
+    {
+        event: "opentagname",
+        data:  {
+            "b",
+        },
+        endIndex:   41,
+        startIndex: 39,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "b",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   41,
+        startIndex: 39,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "b",
+            bool(false),
+        },
+        endIndex:   45,
+        startIndex: 42,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "sitle",
+            bool(false),
+        },
+        endIndex:   53,
+        startIndex: 46,
+    },
+    {
+        event: "opentagname",
+        data:  {
+            "ttyle",
+        },
+        endIndex:   60,
+        startIndex: 54,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "ttyle",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   60,
+        startIndex: 54,
+    },
+    {
+        event: "opentagname",
+        data:  {
+            "b",
+        },
+        endIndex:   63,
+        startIndex: 61,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "b",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   63,
+        startIndex: 61,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "b",
+            bool(false),
+        },
+        endIndex:   67,
+        startIndex: 64,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "ttyle",
+            bool(false),
+        },
+        endIndex:   75,
+        startIndex: 68,
+    },
+    {
+        event: "opentagname",
+        data:  {
+            "script",
+        },
+        endIndex:   83,
+        startIndex: 76,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "script",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   83,
+        startIndex: 76,
+    },
+    {
+        event: "text",
+        data:  {
+            "</scripter</soo",
+        },
+        endIndex:   98,
+        startIndex: 84,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "script",
+            bool(false),
+        },
+        endIndex:   107,
+        startIndex: 99,
+    },
+    {
+        event: "opentagname",
+        data:  {
+            "style",
+        },
+        endIndex:   114,
+        startIndex: 108,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "style",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   114,
+        startIndex: 108,
+    },
+    {
+        event: "text",
+        data:  {
+            "</styler",
+        },
+        endIndex:   122,
+        startIndex: 115,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "style",
+            bool(false),
+        },
+        endIndex:   130,
+        startIndex: 123,
+    },
+    {
+        event: "opentagname",
+        data:  {
+            "scipt",
+        },
+        endIndex:   137,
+        startIndex: 131,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "scipt",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   137,
+        startIndex: 131,
+    },
+    {
+        event: "opentagname",
+        data:  {
+            "stylee",
+        },
+        endIndex:   145,
+        startIndex: 138,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "stylee",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   145,
+        startIndex: 138,
+    },
+    {
+        event: "opentagname",
+        data:  {
+            "scriptee",
+        },
+        endIndex:   155,
+        startIndex: 146,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "scriptee",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   155,
+        startIndex: 146,
+    },
+    {
+        event: "opentagname",
+        data:  {
+            "soo",
+        },
+        endIndex:   160,
+        startIndex: 156,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "soo",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   160,
+        startIndex: 156,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "soo",
+            bool(true),
+        },
+        endIndex:   161,
+        startIndex: 161,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "scriptee",
+            bool(true),
+        },
+        endIndex:   161,
+        startIndex: 161,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "stylee",
+            bool(true),
+        },
+        endIndex:   161,
+        startIndex: 161,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "scipt",
+            bool(true),
+        },
+        endIndex:   161,
+        startIndex: 161,
+    },
+}
+---
+
+[TestEvents/Start_&_end_indices_from_domhandler - 1]
+[]parser.TestEvent{
+    {
+        event: "processinginstruction",
+        data:  {
+            "!doctype",
+            "!DOCTYPE html",
+        },
+        endIndex:   14,
+        startIndex: 0,
+    },
+    {
+        event: "text",
+        data:  {
+            " ",
+        },
+        endIndex:   15,
+        startIndex: 15,
+    },
+    {
+        event: "opentagname",
+        data:  {
+            "html",
+        },
+        endIndex:   21,
+        startIndex: 16,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "html",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   21,
+        startIndex: 16,
+    },
+    {
+        event: "text",
+        data:  {
+            " ",
+        },
+        endIndex:   22,
+        startIndex: 22,
+    },
+    {
+        event: "opentagname",
+        data:  {
+            "title",
+        },
+        endIndex:   29,
+        startIndex: 23,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "title",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   29,
+        startIndex: 23,
+    },
+    {
+        event: "text",
+        data:  {
+            "The Title",
+        },
+        endIndex:   38,
+        startIndex: 30,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "title",
+            bool(false),
+        },
+        endIndex:   46,
+        startIndex: 39,
+    },
+    {
+        event: "text",
+        data:  {
+            " ",
+        },
+        endIndex:   47,
+        startIndex: 47,
+    },
+    {
+        event: "opentagname",
+        data:  {
+            "body",
+        },
+        endIndex:   53,
+        startIndex: 48,
+    },
+    {
+        event: "attribute",
+        data:  {
+            "class",
+            "foo",
+            parser.QuoteType(2),
+        },
+        endIndex:   65,
+        startIndex: 54,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "body",
+            []*parser.Attribute{
+                &parser.Attribute{Name:"class", Value:"foo"},
+            },
+            bool(false),
+        },
+        endIndex:   65,
+        startIndex: 48,
+    },
+    {
+        event: "text",
+        data:  {
+            "Hello world ",
+        },
+        endIndex:   77,
+        startIndex: 66,
+    },
+    {
+        event: "opentagname",
+        data:  {
+            "p",
+        },
+        endIndex:   80,
+        startIndex: 78,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "p",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   80,
+        startIndex: 78,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "p",
+            bool(false),
+        },
+        endIndex:   84,
+        startIndex: 81,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "body",
+            bool(false),
+        },
+        endIndex:   91,
+        startIndex: 85,
+    },
+    {
+        event: "text",
+        data:  {
+            " ",
+        },
+        endIndex:   92,
+        startIndex: 92,
+    },
+    {
+        event: "comment",
+        data:  {
+            " the comment ",
+        },
+        endIndex:   112,
+        startIndex: 93,
+    },
+    {
+        event: "commentend",
+        data:  {
+        },
+        endIndex:   112,
+        startIndex: 93,
+    },
+    {
+        event: "text",
+        data:  {
+            " ",
+        },
+        endIndex:   113,
+        startIndex: 113,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "html",
+            bool(false),
+        },
+        endIndex:   120,
+        startIndex: 114,
+    },
+    {
+        event: "text",
+        data:  {
+            " ",
+        },
+        endIndex:   121,
+        startIndex: 121,
+    },
+}
+---
+
+[TestEvents/Template_script_tags - 1]
+[]parser.TestEvent{
+    {
+        event: "opentagname",
+        data:  {
+            "p",
+        },
+        endIndex:   2,
+        startIndex: 0,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "p",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   2,
+        startIndex: 0,
+    },
+    {
+        event: "opentagname",
+        data:  {
+            "script",
+        },
+        endIndex:   10,
+        startIndex: 3,
+    },
+    {
+        event: "attribute",
+        data:  {
+            "type",
+            "text/template",
+            parser.QuoteType(3),
+        },
+        endIndex:   31,
+        startIndex: 11,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "script",
+            []*parser.Attribute{
+                &parser.Attribute{Name:"type", Value:"text/template"},
+            },
+            bool(false),
+        },
+        endIndex:   31,
+        startIndex: 3,
+    },
+    {
+        event: "text",
+        data:  {
+            "<h1>Heading1</h1>",
+        },
+        endIndex:   48,
+        startIndex: 32,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "script",
+            bool(false),
+        },
+        endIndex:   57,
+        startIndex: 49,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "p",
+            bool(false),
+        },
+        endIndex:   61,
+        startIndex: 58,
+    },
+}
+---
+
+[TestEvents/Trailing_legacy_entity - 1]
+[]parser.TestEvent{
+    {
+        event: "text",
+        data:  {
+            "⨱×bar",
+        },
+        endIndex:   18,
+        startIndex: 0,
+    },
+}
+---
+
+[TestEvents/Trailing_numeric_entity - 1]
+[]parser.TestEvent{
+    {
+        event: "text",
+        data:  {
+            "55",
+        },
+        endIndex:   7,
+        startIndex: 0,
+    },
+}
+---
+
+[TestEvents/XML_tags - 1]
+[]parser.TestEvent{
+    {
+        event: "opentagname",
+        data:  {
+            ":foo",
+        },
+        endIndex:   5,
+        startIndex: 0,
+    },
+    {
+        event: "opentag",
+        data:  {
+            ":foo",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   5,
+        startIndex: 0,
+    },
+    {
+        event: "opentagname",
+        data:  {
+            "_bar",
+        },
+        endIndex:   11,
+        startIndex: 6,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "_bar",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   11,
+        startIndex: 6,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "_bar",
+            bool(true),
+        },
+        endIndex:   12,
+        startIndex: 12,
+    },
+    {
+        event: "closetag",
+        data:  {
+            ":foo",
+            bool(true),
+        },
+        endIndex:   12,
+        startIndex: 12,
+    },
+}
+---
+
+[TestEvents/attributes_(no_white_space,_no_value,_no_quotes) - 1]
+[]parser.TestEvent{
+    {
+        event: "opentagname",
+        data:  {
+            "button",
+        },
+        endIndex:   7,
+        startIndex: 0,
+    },
+    {
+        event: "attribute",
+        data:  {
+            "class",
+            "test0",
+            parser.QuoteType(3),
+        },
+        endIndex:   21,
+        startIndex: 8,
+    },
+    {
+        event: "attribute",
+        data:  {
+            "title",
+            "test1",
+            parser.QuoteType(3),
+        },
+        endIndex:   34,
+        startIndex: 21,
+    },
+    {
+        event: "attribute",
+        data:  {
+            "disabled",
+            "",
+        },
+        endIndex:   43,
+        startIndex: 35,
+    },
+    {
+        event: "attribute",
+        data:  {
+            "value",
+            "test2",
+            parser.QuoteType(1),
+        },
+        endIndex:   55,
+        startIndex: 44,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "button",
+            []*parser.Attribute{
+                &parser.Attribute{Name:"class", Value:"test0"},
+                &parser.Attribute{Name:"title", Value:"test1"},
+                &parser.Attribute{Name:"disabled", Value:""},
+                &parser.Attribute{Name:"value", Value:"test2"},
+            },
+            bool(false),
+        },
+        endIndex:   55,
+        startIndex: 0,
+    },
+    {
+        event: "text",
+        data:  {
+            "adsf",
+        },
+        endIndex:   59,
+        startIndex: 56,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "button",
+            bool(false),
+        },
+        endIndex:   68,
+        startIndex: 60,
+    },
+}
+---
+
+[TestEvents/crazy_attribute - 1]
+[]parser.TestEvent{
+    {
+        event: "opentagname",
+        data:  {
+            "p",
+        },
+        endIndex:   2,
+        startIndex: 0,
+    },
+    {
+        event: "attribute",
+        data:  {
+            "<",
+            "",
+            parser.QuoteType(2),
+        },
+        endIndex:   9,
+        startIndex: 3,
+    },
+    {
+        event: "attribute",
+        data:  {
+            "fail",
+            "",
+        },
+        endIndex:   14,
+        startIndex: 10,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "p",
+            []*parser.Attribute{
+                &parser.Attribute{Name:"<", Value:""},
+                &parser.Attribute{Name:"fail", Value:""},
+            },
+            bool(false),
+        },
+        endIndex:   14,
+        startIndex: 0,
+    },
+    {
+        event: "text",
+        data:  {
+            "stuff",
+        },
+        endIndex:   19,
+        startIndex: 15,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "p",
+            bool(false),
+        },
+        endIndex:   23,
+        startIndex: 20,
+    },
+}
+---
+
+[TestEvents/double_attribute - 1]
+[]parser.TestEvent{
+    {
+        event: "opentagname",
+        data:  {
+            "h1",
+        },
+        endIndex:   3,
+        startIndex: 0,
+    },
+    {
+        event: "attribute",
+        data:  {
+            "class",
+            "test",
+            parser.QuoteType(1),
+        },
+        endIndex:   14,
+        startIndex: 4,
+    },
+    {
+        event: "attribute",
+        data:  {
+            "class",
+            "boo",
+            parser.QuoteType(1),
+        },
+        endIndex:   24,
+        startIndex: 15,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "h1",
+            []*parser.Attribute{
+                &parser.Attribute{Name:"class", Value:"test"},
+            },
+            bool(false),
+        },
+        endIndex:   24,
+        startIndex: 0,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "h1",
+            bool(false),
+        },
+        endIndex:   29,
+        startIndex: 25,
+    },
+}
+---
+
+[TestEvents/double_brackets - 1]
+[]parser.TestEvent{
+    {
+        event: "text",
+        data:  {
+            "<",
+        },
+        endIndex:   0,
+        startIndex: 0,
+    },
+    {
+        event: "opentagname",
+        data:  {
+            "princess-purpose",
+        },
+        endIndex:   18,
+        startIndex: 1,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "princess-purpose",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   18,
+        startIndex: 1,
+    },
+    {
+        event: "text",
+        data:  {
+            ">testing",
+        },
+        endIndex:   26,
+        startIndex: 19,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "princess-purpose",
+            bool(false),
+        },
+        endIndex:   45,
+        startIndex: 27,
+    },
+}
+---
+
+[TestEvents/end_slash:_as_part_of_attrib_value_of_non-void_element - 1]
+[]parser.TestEvent{
+    {
+        event: "opentagname",
+        data:  {
+            "a",
+        },
+        endIndex:   2,
+        startIndex: 0,
+    },
+    {
+        event: "attribute",
+        data:  {
+            "href",
+            "http://test.com/",
+            parser.QuoteType(1),
+        },
+        endIndex:   24,
+        startIndex: 3,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "a",
+            []*parser.Attribute{
+                &parser.Attribute{Name:"href", Value:"http://test.com/"},
+            },
+            bool(false),
+        },
+        endIndex:   24,
+        startIndex: 0,
+    },
+    {
+        event: "text",
+        data:  {
+            "Foo",
+        },
+        endIndex:   27,
+        startIndex: 25,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "a",
+            bool(false),
+        },
+        endIndex:   31,
+        startIndex: 28,
+    },
+    {
+        event: "opentagname",
+        data:  {
+            "p",
+        },
+        endIndex:   34,
+        startIndex: 32,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "p",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   34,
+        startIndex: 32,
+    },
+    {
+        event: "text",
+        data:  {
+            "Hold the line.",
+        },
+        endIndex:   48,
+        startIndex: 35,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "p",
+            bool(true),
+        },
+        endIndex:   49,
+        startIndex: 49,
+    },
+}
+---
+
+[TestEvents/end_slash:_as_part_of_attrib_value_of_void_element - 1]
+[]parser.TestEvent{
+    {
+        event: "opentagname",
+        data:  {
+            "img",
+        },
+        endIndex:   4,
+        startIndex: 0,
+    },
+    {
+        event: "attribute",
+        data:  {
+            "src",
+            "gif.com/123/",
+            parser.QuoteType(1),
+        },
+        endIndex:   21,
+        startIndex: 5,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "img",
+            []*parser.Attribute{
+                &parser.Attribute{Name:"src", Value:"gif.com/123/"},
+            },
+            bool(false),
+        },
+        endIndex:   21,
+        startIndex: 0,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "img",
+            bool(true),
+        },
+        endIndex:   21,
+        startIndex: 0,
+    },
+    {
+        event: "opentagname",
+        data:  {
+            "p",
+        },
+        endIndex:   24,
+        startIndex: 22,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "p",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   24,
+        startIndex: 22,
+    },
+    {
+        event: "text",
+        data:  {
+            "Hold the line.",
+        },
+        endIndex:   38,
+        startIndex: 25,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "p",
+            bool(true),
+        },
+        endIndex:   39,
+        startIndex: 39,
+    },
+}
+---
+
+[TestEvents/end_slash:_non-void_element_ending_with_/> - 1]
+[]parser.TestEvent{
+    {
+        event: "opentagname",
+        data:  {
+            "xx",
+        },
+        endIndex:   3,
+        startIndex: 0,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "xx",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   6,
+        startIndex: 0,
+    },
+    {
+        event: "opentagname",
+        data:  {
+            "p",
+        },
+        endIndex:   9,
+        startIndex: 7,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "p",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   9,
+        startIndex: 7,
+    },
+    {
+        event: "text",
+        data:  {
+            "Hold the line.",
+        },
+        endIndex:   23,
+        startIndex: 10,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "p",
+            bool(true),
+        },
+        endIndex:   24,
+        startIndex: 24,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "xx",
+            bool(true),
+        },
+        endIndex:   24,
+        startIndex: 24,
+    },
+}
+---
+
+[TestEvents/end_slash:_non-void_element_ending_with_/>,_recognizeSelfClosing=true - 1]
+[]parser.TestEvent{
+    {
+        event: "opentagname",
+        data:  {
+            "xx",
+        },
+        endIndex:   3,
+        startIndex: 0,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "xx",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   6,
+        startIndex: 0,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "xx",
+            bool(true),
+        },
+        endIndex:   6,
+        startIndex: 0,
+    },
+    {
+        event: "opentagname",
+        data:  {
+            "p",
+        },
+        endIndex:   9,
+        startIndex: 7,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "p",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   9,
+        startIndex: 7,
+    },
+    {
+        event: "text",
+        data:  {
+            "Hold the line.",
+        },
+        endIndex:   23,
+        startIndex: 10,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "p",
+            bool(true),
+        },
+        endIndex:   24,
+        startIndex: 24,
+    },
+}
+---
+
+[TestEvents/end_slash:_non-void_element_ending_with_/>,_xmlMode=true - 1]
+[]parser.TestEvent{
+    {
+        event: "opentagname",
+        data:  {
+            "xx",
+        },
+        endIndex:   3,
+        startIndex: 0,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "xx",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   6,
+        startIndex: 0,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "xx",
+            bool(true),
+        },
+        endIndex:   6,
+        startIndex: 0,
+    },
+    {
+        event: "opentagname",
+        data:  {
+            "p",
+        },
+        endIndex:   9,
+        startIndex: 7,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "p",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   9,
+        startIndex: 7,
+    },
+    {
+        event: "text",
+        data:  {
+            "Hold the line.",
+        },
+        endIndex:   23,
+        startIndex: 10,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "p",
+            bool(true),
+        },
+        endIndex:   24,
+        startIndex: 24,
+    },
+}
+---
+
+[TestEvents/end_slash:_void_element_ending_with_/> - 1]
+[]parser.TestEvent{
+    {
+        event: "opentagname",
+        data:  {
+            "hr",
+        },
+        endIndex:   3,
+        startIndex: 0,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "hr",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   6,
+        startIndex: 0,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "hr",
+            bool(true),
+        },
+        endIndex:   6,
+        startIndex: 0,
+    },
+    {
+        event: "opentagname",
+        data:  {
+            "p",
+        },
+        endIndex:   9,
+        startIndex: 7,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "p",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   9,
+        startIndex: 7,
+    },
+    {
+        event: "text",
+        data:  {
+            "Hold the line.",
+        },
+        endIndex:   23,
+        startIndex: 10,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "p",
+            bool(true),
+        },
+        endIndex:   24,
+        startIndex: 24,
+    },
+}
+---
+
+[TestEvents/end_slash:_void_element_ending_with > - 1]
+[]parser.TestEvent{
+    {
+        event: "opentagname",
+        data:  {
+            "hr",
+        },
+        endIndex:   3,
+        startIndex: 0,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "hr",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   6,
+        startIndex: 0,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "hr",
+            bool(true),
+        },
+        endIndex:   6,
+        startIndex: 0,
+    },
+    {
+        event: "opentagname",
+        data:  {
+            "p",
+        },
+        endIndex:   9,
+        startIndex: 7,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "p",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   9,
+        startIndex: 7,
+    },
+    {
+        event: "text",
+        data:  {
+            "Hold the line.",
+        },
+        endIndex:   23,
+        startIndex: 10,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "p",
+            bool(true),
+        },
+        endIndex:   24,
+        startIndex: 24,
+    },
+}
+---
+
+[TestEvents/end_slash:_void_element_ending_with_>,_xmlMode=true - 1]
+[]parser.TestEvent{
+    {
+        event: "opentagname",
+        data:  {
+            "hr",
+        },
+        endIndex:   3,
+        startIndex: 0,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "hr",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   6,
+        startIndex: 0,
+    },
+    {
+        event: "opentagname",
+        data:  {
+            "p",
+        },
+        endIndex:   9,
+        startIndex: 7,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "p",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   9,
+        startIndex: 7,
+    },
+    {
+        event: "text",
+        data:  {
+            "Hold the line.",
+        },
+        endIndex:   23,
+        startIndex: 10,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "p",
+            bool(true),
+        },
+        endIndex:   24,
+        startIndex: 24,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "hr",
+            bool(true),
+        },
+        endIndex:   24,
+        startIndex: 24,
+    },
+}
+---
+
+[TestEvents/entity_in_attribute_(#276) - 1]
+[]parser.TestEvent{
+    {
+        event: "opentagname",
+        data:  {
+            "img",
+        },
+        endIndex:   4,
+        startIndex: 0,
+    },
+    {
+        event: "attribute",
+        data:  {
+            "src",
+            "?&image_uri=1&ℑ=2&image=3",
+            parser.QuoteType(3),
+        },
+        endIndex:   42,
+        startIndex: 5,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "img",
+            []*parser.Attribute{
+                &parser.Attribute{Name:"src", Value:"?&image_uri=1&ℑ=2&image=3"},
+            },
+            bool(false),
+        },
+        endIndex:   43,
+        startIndex: 0,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "img",
+            bool(true),
+        },
+        endIndex:   43,
+        startIndex: 0,
+    },
+    {
+        event: "text",
+        data:  {
+            "?&image_uri=1&ℑ=2&image=3",
+        },
+        endIndex:   74,
+        startIndex: 44,
+    },
+}
+---
+
+[TestEvents/entity_in_attribute - 1]
+[]parser.TestEvent{
+    {
+        event: "opentagname",
+        data:  {
+            "a",
+        },
+        endIndex:   2,
+        startIndex: 0,
+    },
+    {
+        event: "attribute",
+        data:  {
+            "href",
+            "http://example.com/pa#x61ge?param=value&param2&param3=<val&; & &",
+            parser.QuoteType(2),
+        },
+        endIndex:   82,
+        startIndex: 3,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "a",
+            []*parser.Attribute{
+                &parser.Attribute{Name:"href", Value:"http://example.com/pa#x61ge?param=value&param2&param3=<val&; & &"},
+            },
+            bool(false),
+        },
+        endIndex:   82,
+        startIndex: 0,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "a",
+            bool(true),
+        },
+        endIndex:   83,
+        startIndex: 83,
+    },
+}
+---
+
+[TestEvents/entity_in_title_(#592) - 1]
+[]parser.TestEvent{
+    {
+        event: "opentagname",
+        data:  {
+            "title",
+        },
+        endIndex:   6,
+        startIndex: 0,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "title",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   6,
+        startIndex: 0,
+    },
+    {
+        event: "text",
+        data:  {
+            "the \"title\"",
+        },
+        endIndex:   26,
+        startIndex: 7,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "title",
+            bool(true),
+        },
+        endIndex:   27,
+        startIndex: 27,
+    },
+}
+---
+
+[TestEvents/entity_in_title_-_decodeEntities=false_(#592) - 1]
+[]parser.TestEvent{
+    {
+        event: "opentagname",
+        data:  {
+            "title",
+        },
+        endIndex:   6,
+        startIndex: 0,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "title",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   6,
+        startIndex: 0,
+    },
+    {
+        event: "text",
+        data:  {
+            "the &quot;title&quot;",
+        },
+        endIndex:   27,
+        startIndex: 7,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "title",
+            bool(true),
+        },
+        endIndex:   28,
+        startIndex: 28,
+    },
+}
+---
+
+[TestEvents/leading_lt - 1]
+[]parser.TestEvent{
+    {
+        event: "text",
+        data:  {
+            ">a>",
+        },
+        endIndex:   2,
+        startIndex: 0,
+    },
+}
+---
+
+[TestEvents/legacy_entities - 1]
+[]parser.TestEvent{
+    {
+        event: "text",
+        data:  {
+            "&elíe&eer;s<er&sum",
+        },
+        endIndex:   31,
+        startIndex: 0,
+    },
+}
+---
+
+[TestEvents/legacy_entities_fail - 1]
+[]parser.TestEvent{
+    {
+        event: "text",
+        data:  {
+            "M&M",
+        },
+        endIndex:   2,
+        startIndex: 0,
+    },
+}
+---
+
+[TestEvents/lt_followed_by_whitespace - 1]
+[]parser.TestEvent{
+    {
+        event: "text",
+        data:  {
+            "a < b",
+        },
+        endIndex:   4,
+        startIndex: 0,
+    },
+}
+---
+
+[TestEvents/named_entities - 1]
+[]parser.TestEvent{
+    {
+        event: "text",
+        data:  {
+            "&el<er∳foo&bar",
+        },
+        endIndex:   52,
+        startIndex: 0,
+    },
+}
+---
+
+[TestEvents/numeric_entities - 1]
+[]parser.TestEvent{
+    {
+        event: "text",
+        data:  {
+            "abcdfg&#x;h",
+        },
+        endIndex:   35,
+        startIndex: 0,
+    },
+}
+---
+
+[TestEvents/open-implies-close_case_of_(non-br)_void_close_tag_in_non-XML_mode - 1]
+[]parser.TestEvent{
+    {
+        event: "opentagname",
+        data:  {
+            "select",
+        },
+        endIndex:   7,
+        startIndex: 0,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "select",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   7,
+        startIndex: 0,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "select",
+            bool(true),
+        },
+        endIndex:   14,
+        startIndex: 8,
+    },
+    {
+        event: "opentagname",
+        data:  {
+            "input",
+        },
+        endIndex:   14,
+        startIndex: 8,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "input",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   14,
+        startIndex: 8,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "input",
+            bool(true),
+        },
+        endIndex:   14,
+        startIndex: 8,
+    },
+}
+---
+
+[TestEvents/simple - 1]
+[]parser.TestEvent{
+    {
+        event: "opentagname",
+        data:  {
+            "h1",
+        },
+        endIndex:   3,
+        startIndex: 0,
+    },
+    {
+        event: "attribute",
+        data:  {
+            "class",
+            "test",
+            parser.QuoteType(1),
+        },
+        endIndex:   14,
+        startIndex: 4,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "h1",
+            []*parser.Attribute{
+                &parser.Attribute{Name:"class", Value:"test"},
+            },
+            bool(false),
+        },
+        endIndex:   14,
+        startIndex: 0,
+    },
+    {
+        event: "text",
+        data:  {
+            "adsf",
+        },
+        endIndex:   18,
+        startIndex: 15,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "h1",
+            bool(false),
+        },
+        endIndex:   23,
+        startIndex: 19,
+    },
+}
+---
+
+[TestEvents/tag_names_are_not_ASCII_alpha - 1]
+[]parser.TestEvent{
+    {
+        event: "text",
+        data:  {
+            "<12>text",
+        },
+        endIndex:   7,
+        startIndex: 0,
+    },
+    {
+        event: "comment",
+        data:  {
+            "12",
+        },
+        endIndex:   12,
+        startIndex: 8,
+    },
+    {
+        event: "commentend",
+        data:  {
+        },
+        endIndex:   12,
+        startIndex: 8,
+    },
+}
+---
+
+[TestEvents/xml_entities - 1]
+[]parser.TestEvent{
+    {
+        event: "text",
+        data:  {
+            "&>&amp<&uuml;a&#x62c&#100&#101",
+        },
+        endIndex:   48,
+        startIndex: 0,
+    },
+}
+---
+
+[TestEvents/end_slash:_void_element_ending_with_> - 1]
+[]parser.TestEvent{
+    {
+        event: "opentagname",
+        data:  {
+            "hr",
+        },
+        endIndex:   3,
+        startIndex: 0,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "hr",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   6,
+        startIndex: 0,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "hr",
+            bool(true),
+        },
+        endIndex:   6,
+        startIndex: 0,
+    },
+    {
+        event: "opentagname",
+        data:  {
+            "p",
+        },
+        endIndex:   9,
+        startIndex: 7,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "p",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   9,
+        startIndex: 7,
+    },
+    {
+        event: "text",
+        data:  {
+            "Hold the line.",
+        },
+        endIndex:   23,
+        startIndex: 10,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "p",
+            bool(true),
+        },
+        endIndex:   24,
+        startIndex: 24,
+    },
+}
+---
