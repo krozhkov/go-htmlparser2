@@ -3,6 +3,7 @@ module github.com/krozhkov/go-htmlparser2
 go 1.25.3
 
 require (
+	github.com/elliotchance/orderedmap/v3 v3.1.0
 	github.com/gkampitakis/go-snaps v0.5.21
 	github.com/stretchr/testify v1.11.1
 )
