@@ -21,6 +21,10 @@ func GetText(node *dom.Node) string {
 }
 
 func getText(sb *strings.Builder, node *dom.Node) {
+	if node == nil {
+		return
+	}
+
 	if dom.IsTag(node) {
 		if node.Name == "br" {
 			sb.WriteString("\n")
@@ -55,6 +59,10 @@ func TextContent(node *dom.Node) string {
 }
 
 func textContent(sb *strings.Builder, node *dom.Node) {
+	if node == nil {
+		return
+	}
+
 	if dom.HasChildren(node) && !dom.IsComment(node) {
 		for _, node := range node.Children {
 			textContent(sb, node)
@@ -80,6 +88,10 @@ func InnerText(node *dom.Node) string {
 }
 
 func innerText(sb *strings.Builder, node *dom.Node) {
+	if node == nil {
+		return
+	}
+
 	if dom.HasChildren(node) && (node.Type == dom.ElementTypeTag || dom.IsCDATA(node)) {
 		for _, node := range node.Children {
 			innerText(sb, node)

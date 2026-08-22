@@ -125,7 +125,7 @@ func NewNodeWithChildren(typ ElementType, nodeType int, children []*Node) *Node 
 // Aliases
 /** First child of the node. */
 func (n *Node) FirstChild() *Node {
-	if len(n.Children) > 0 {
+	if n != nil && len(n.Children) > 0 {
 		return n.Children[0]
 	}
 
@@ -134,7 +134,7 @@ func (n *Node) FirstChild() *Node {
 
 /** Last child of the node. */
 func (n *Node) LastChild() *Node {
-	if len(n.Children) > 0 {
+	if n != nil && len(n.Children) > 0 {
 		return n.Children[len(n.Children)-1]
 	}
 
@@ -183,11 +183,15 @@ func NewElement(name string, attribs *Attributes, children []*Node, typ ElementT
  * [DOM spec](https://dom.spec.whatwg.org)-compatible alias.
  */
 func (n *Node) TagName() string {
-	return n.Name
+	if n != nil {
+		return n.Name
+	}
+
+	return ""
 }
 
 func (n *Node) Attributes() []*Attribute {
-	if n.Attribs != nil {
+	if n != nil && n.Attribs != nil {
 		attributes := make([]*Attribute, 0, n.Attribs.Len())
 		for name, value := range n.Attribs.AllFromFront() {
 			attributes = append(attributes, &Attribute{Key: name, Value: value})
@@ -206,7 +210,7 @@ func (n *Node) Attributes() []*Attribute {
  * @returns `true` if the node is an element node.
  */
 func IsTag(node *Node) bool {
-	return node.Type == ElementTypeTag || node.Type == ElementTypeScript || node.Type == ElementTypeStyle
+	return node != nil && (node.Type == ElementTypeTag || node.Type == ElementTypeScript || node.Type == ElementTypeStyle)
 }
 
 /**
@@ -216,7 +220,7 @@ func IsTag(node *Node) bool {
  * @returns `true` if the node is a CDATA node.
  */
 func IsCDATA(node *Node) bool {
-	return node.Type == ElementTypeCDATA
+	return node != nil && node.Type == ElementTypeCDATA
 }
 
 /**
@@ -226,7 +230,7 @@ func IsCDATA(node *Node) bool {
  * @returns `true` if the node is a text node.
  */
 func IsText(node *Node) bool {
-	return node.Type == ElementTypeText
+	return node != nil && node.Type == ElementTypeText
 }
 
 /**
@@ -236,7 +240,7 @@ func IsText(node *Node) bool {
  * @returns `true` if the node is a comment node.
  */
 func IsComment(node *Node) bool {
-	return node.Type == ElementTypeComment
+	return node != nil && node.Type == ElementTypeComment
 }
 
 /**
@@ -246,7 +250,7 @@ func IsComment(node *Node) bool {
  * @returns `true` if the node is a directive node.
  */
 func IsDirective(node *Node) bool {
-	return node.Type == ElementTypeDirective
+	return node != nil && node.Type == ElementTypeDirective
 }
 
 /**
@@ -256,7 +260,7 @@ func IsDirective(node *Node) bool {
  * @returns `true` if the node is a document node.
  */
 func IsDocument(node *Node) bool {
-	return node.Type == ElementTypeRoot
+	return node != nil && node.Type == ElementTypeRoot
 }
 
 /**
@@ -266,7 +270,7 @@ func IsDocument(node *Node) bool {
  * @returns `true` if the node has children.
  */
 func HasChildren(node *Node) bool {
-	return len(node.Children) > 0
+	return node != nil && len(node.Children) > 0
 }
 
 /**
@@ -299,7 +303,9 @@ func CloneNode(node *Node, recursive bool) (*Node, error) {
 
 		clone := NewElement(node.Name, node.Attribs, children, node.Type)
 		for _, child := range children {
-			child.Parent = clone
+			if child != nil {
+				child.Parent = clone
+			}
 		}
 
 		result = clone
@@ -316,7 +322,9 @@ func CloneNode(node *Node, recursive bool) (*Node, error) {
 
 		clone := NewCDATA(children)
 		for _, child := range children {
-			child.Parent = clone
+			if child != nil {
+				child.Parent = clone
+			}
 		}
 		result = clone
 	} else if IsDocument(node) {
@@ -331,7 +339,9 @@ func CloneNode(node *Node, recursive bool) (*Node, error) {
 		}
 		clone := NewDocument(children)
 		for _, child := range children {
-			child.Parent = clone
+			if child != nil {
+				child.Parent = clone
+			}
 		}
 
 		result = clone
@@ -362,6 +372,10 @@ func cloneChildren(childs []*Node) ([]*Node, error) {
 
 	children := make([]*Node, 0, len(childs))
 	for _, child := range childs {
+		if child == nil {
+			continue
+		}
+
 		clone, err := CloneNode(child, true)
 		if err != nil {
 			return nil, err

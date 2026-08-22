@@ -232,6 +232,10 @@ func isForeignElements(name string) bool {
 }
 
 func renderTag(sb *strings.Builder, elem *dom.Node, opts DomSerializerOptions) {
+	if elem == nil {
+		return
+	}
+
 	// Handle SVG / MathML in HTML
 	if opts.XmlMode != nil && *opts.XmlMode == "foreign" {
 		/* Fix up mixed-case element names */
@@ -284,12 +288,20 @@ func renderTag(sb *strings.Builder, elem *dom.Node, opts DomSerializerOptions) {
 }
 
 func renderDirective(sb *strings.Builder, elem *dom.Node) {
+	if elem == nil {
+		return
+	}
+
 	sb.WriteString("<")
 	sb.WriteString(elem.Data)
 	sb.WriteString(">")
 }
 
 func renderText(sb *strings.Builder, elem *dom.Node, opts DomSerializerOptions) {
+	if elem == nil {
+		return
+	}
+
 	// If entities weren't decoded, no need to encode them back
 	var encodeEntities bool
 	if opts.EncodeEntities != nil {
@@ -310,14 +322,22 @@ func renderText(sb *strings.Builder, elem *dom.Node, opts DomSerializerOptions) 
 }
 
 func renderCdata(sb *strings.Builder, elem *dom.Node) {
+	if elem == nil {
+		return
+	}
+
 	sb.WriteString("<![CDATA[")
-	if len(elem.Children) > 0 {
+	if len(elem.Children) > 0 && elem.Children[0] != nil {
 		sb.WriteString(elem.Children[0].Data)
 	}
 	sb.WriteString("]]>")
 }
 
 func renderComment(sb *strings.Builder, elem *dom.Node) {
+	if elem == nil {
+		return
+	}
+
 	sb.WriteString("<!--")
 	sb.WriteString(elem.Data)
 	sb.WriteString("-->")

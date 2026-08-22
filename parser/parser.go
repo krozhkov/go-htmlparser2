@@ -295,7 +295,9 @@ func NewParser(cbs Handler, options *ParserOptions) *Parser {
 		)
 	}
 
-	p.cbs.OnParserInit(p)
+	if p.cbs != nil {
+		p.cbs.OnParserInit(p)
+	}
 
 	return p
 }
@@ -427,7 +429,9 @@ func (p *Parser) OnCloseTag(start, endIndex int) {
 	}
 
 	if p.htmlMode && (isForeignContextElements(name) || isHtmlIntegrationElements(name)) {
-		p.foreignContext = p.foreignContext[:len(p.foreignContext)-1]
+		if len(p.foreignContext) > 1 {
+			p.foreignContext = p.foreignContext[:len(p.foreignContext)-1]
+		}
 	}
 
 	if !p.isVoidElement(name) {

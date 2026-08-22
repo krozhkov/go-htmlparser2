@@ -21,6 +21,9 @@ func RemoveSubsets(nodes []*dom.Node) []*dom.Node {
 	 */
 	for idx := len(nodes) - 1; idx >= 0; idx-- {
 		node := nodes[idx]
+		if node == nil {
+			continue
+		}
 
 		/*
 		 * Remove the node if it is not unique.

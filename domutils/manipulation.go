@@ -13,6 +13,10 @@ import (
  * @param elem The element to be removed
  */
 func RemoveElement(elem *dom.Node) {
+	if elem == nil {
+		return
+	}
+
 	if elem.PreviousSibling != nil {
 		elem.PreviousSibling.NextSibling = elem.NextSibling
 	}
@@ -39,6 +43,12 @@ func RemoveElement(elem *dom.Node) {
  * @param replacement The element to be added
  */
 func ReplaceElement(elem *dom.Node, replacement *dom.Node) {
+	if elem == nil || replacement == nil {
+		return
+	}
+
+	RemoveElement(replacement)
+
 	prev := elem.PreviousSibling
 	replacement.PreviousSibling = prev
 	if prev != nil {
@@ -58,7 +68,9 @@ func ReplaceElement(elem *dom.Node, replacement *dom.Node) {
 	if parent != nil {
 		childs := parent.Children
 		childsIndex := lastIndex(childs, elem)
-		childs[childsIndex] = replacement
+		if childsIndex >= 0 {
+			childs[childsIndex] = replacement
+		}
 		elem.Parent = nil
 	}
 }
@@ -71,6 +83,10 @@ func ReplaceElement(elem *dom.Node, replacement *dom.Node) {
  * @param child The element to be added as a child.
  */
 func AppendChild(parent *dom.Node, child *dom.Node) {
+	if parent == nil || child == nil {
+		return
+	}
+
 	RemoveElement(child)
 
 	child.Parent = parent
@@ -78,8 +94,10 @@ func AppendChild(parent *dom.Node, child *dom.Node) {
 
 	if len(parent.Children) > 1 {
 		sibling := parent.Children[len(parent.Children)-2]
-		sibling.NextSibling = child
-		child.PreviousSibling = sibling
+		if sibling != nil {
+			sibling.NextSibling = child
+			child.PreviousSibling = sibling
+		}
 	}
 }
 
@@ -91,6 +109,10 @@ func AppendChild(parent *dom.Node, child *dom.Node) {
  * @param next The element be added.
  */
 func Append(elem *dom.Node, next *dom.Node) {
+	if elem == nil || next == nil {
+		return
+	}
+
 	RemoveElement(next)
 
 	parent := elem.Parent
@@ -105,7 +127,11 @@ func Append(elem *dom.Node, next *dom.Node) {
 		currNext.PreviousSibling = next
 		if parent != nil {
 			index := lastIndex(parent.Children, currNext)
-			parent.Children = slices.Insert(parent.Children, index, next)
+			if index >= 0 {
+				parent.Children = slices.Insert(parent.Children, index, next)
+			} else {
+				parent.Children = append(parent.Children, next)
+			}
 		}
 	} else if parent != nil {
 		parent.Children = append(parent.Children, next)
@@ -120,6 +146,10 @@ func Append(elem *dom.Node, next *dom.Node) {
  * @param child The element to be added as a child.
  */
 func PrependChild(parent *dom.Node, child *dom.Node) {
+	if parent == nil || child == nil {
+		return
+	}
+
 	RemoveElement(child)
 
 	child.Parent = parent
@@ -127,8 +157,10 @@ func PrependChild(parent *dom.Node, child *dom.Node) {
 
 	if len(parent.Children) > 1 {
 		sibling := parent.Children[1]
-		sibling.PreviousSibling = child
-		child.NextSibling = sibling
+		if sibling != nil {
+			sibling.PreviousSibling = child
+			child.NextSibling = sibling
+		}
 	}
 }
 
@@ -140,12 +172,20 @@ func PrependChild(parent *dom.Node, child *dom.Node) {
  * @param prev The element be added.
  */
 func Prepend(elem *dom.Node, prev *dom.Node) {
+	if elem == nil || prev == nil {
+		return
+	}
+
 	RemoveElement(prev)
 
 	parent := elem.Parent
 	if parent != nil {
 		index := lastIndex(parent.Children, elem)
-		parent.Children = slices.Insert(parent.Children, index, prev)
+		if index >= 0 {
+			parent.Children = slices.Insert(parent.Children, index, prev)
+		} else {
+			parent.Children = append(parent.Children, prev)
+		}
 	}
 
 	if elem.PreviousSibling != nil {

@@ -79,7 +79,7 @@ func Find(
 			}
 		}
 
-		if recurse && dom.HasChildren(elem) && elem != nil && len(elem.Children) > 0 {
+		if recurse && elem != nil && dom.HasChildren(elem) && len(elem.Children) > 0 {
 			/*
 			 * Add the children to the stack. We are depth-first, so this is
 			 * the next array we look at.
@@ -127,10 +127,10 @@ func FindOne(
 	recurse bool,
 ) *dom.Node {
 	for _, node := range nodes {
-		if dom.IsTag(node) && test(node) {
+		if node != nil && dom.IsTag(node) && test(node) {
 			return node
 		}
-		if recurse && dom.HasChildren(node) && len(node.Children) > 0 {
+		if recurse && node != nil && dom.HasChildren(node) && len(node.Children) > 0 {
 			found := FindOne(test, node.Children, true)
 			if found != nil {
 				return found
@@ -154,7 +154,7 @@ func ExistsOne(
 	nodes []*dom.Node,
 ) bool {
 	for _, node := range nodes {
-		if (dom.IsTag(node) && test(node)) || (dom.HasChildren(node) && ExistsOne(test, node.Children)) {
+		if node != nil && ((dom.IsTag(node) && test(node)) || (dom.HasChildren(node) && ExistsOne(test, node.Children))) {
 			return true
 		}
 	}
@@ -200,11 +200,11 @@ func FindAll(
 		elem := nodeStack[length-1][indexStack[length-1]]
 		indexStack[length-1]++
 
-		if dom.IsTag(elem) && test(elem) {
+		if elem != nil && dom.IsTag(elem) && test(elem) {
 			result = append(result, elem)
 		}
 
-		if dom.HasChildren(elem) && elem != nil && len(elem.Children) > 0 {
+		if elem != nil && dom.HasChildren(elem) && len(elem.Children) > 0 {
 			indexStack = append(indexStack, 0)
 			nodeStack = append(nodeStack, elem.Children)
 		}

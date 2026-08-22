@@ -18,7 +18,7 @@ func GetElementById(
 ) *dom.Node {
 	return FindOne(
 		func(elem *dom.Node) bool {
-			return elem != nil && dom.IsTag(elem) && elem.Attribs.GetOrDefault("id", "") == id
+			return elem != nil && dom.IsTag(elem) && elem.Attribs != nil && elem.Attribs.GetOrDefault("id", "") == id
 		},
 		nodes,
 		recurse,
@@ -32,7 +32,7 @@ func GetElementByIdFn(
 ) *dom.Node {
 	return FindOne(
 		func(elem *dom.Node) bool {
-			return elem != nil && dom.IsTag(elem) && test(elem.Attribs.GetOrDefault("id", ""))
+			return elem != nil && dom.IsTag(elem) && elem.Attribs != nil && test(elem.Attribs.GetOrDefault("id", ""))
 		},
 		nodes,
 		recurse,
@@ -102,7 +102,7 @@ func GetElementsByClassName(
 ) []*dom.Node {
 	return Filter(
 		func(elem *dom.Node) bool {
-			return elem != nil && dom.IsTag(elem) && elem.Attribs.GetOrDefault("class", "") == className
+			return elem != nil && dom.IsTag(elem) && elem.Attribs != nil && elem.Attribs.GetOrDefault("class", "") == className
 		},
 		nodes,
 		recurse,
@@ -118,7 +118,7 @@ func GetElementsByClassNameFn(
 ) []*dom.Node {
 	return Filter(
 		func(elem *dom.Node) bool {
-			return elem != nil && dom.IsTag(elem) && test(elem.Attribs.GetOrDefault("class", ""))
+			return elem != nil && dom.IsTag(elem) && elem.Attribs != nil && test(elem.Attribs.GetOrDefault("class", ""))
 		},
 		nodes,
 		recurse,

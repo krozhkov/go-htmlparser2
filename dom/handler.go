@@ -99,10 +99,6 @@ func (h *DomHandler) OnError(e error) {
 }
 
 func (h *DomHandler) OnCloseTag(name string, isImplied bool) {
-	if h.parser == nil {
-		return
-	}
-
 	h.lastNode = nil
 
 	var elem *Node
@@ -113,7 +109,7 @@ func (h *DomHandler) OnCloseTag(name string, isImplied bool) {
 		h.tagStack = h.tagStack[:lastIndex]
 	}
 
-	if h.options != nil && h.options.WithEndIndices && elem != nil {
+	if h.options != nil && h.options.WithEndIndices && elem != nil && h.parser != nil {
 		elem.EndIndex = h.parser.EndIndex
 	}
 
@@ -142,7 +138,7 @@ func (h *DomHandler) OnText(data string) {
 
 	if lastNode != nil && lastNode.Type == ElementTypeText {
 		lastNode.Data += data
-		if h.options != nil && h.options.WithEndIndices {
+		if h.options != nil && h.options.WithEndIndices && h.parser != nil {
 			lastNode.EndIndex = h.parser.EndIndex
 		}
 	} else {
@@ -206,7 +202,7 @@ func (h *DomHandler) addNode(node *Node) {
 		parent = h.tagStack[len(h.tagStack)-1]
 	}
 
-	if h.parser == nil || parent == nil || node == nil {
+	if parent == nil || node == nil {
 		return
 	}
 
@@ -217,11 +213,11 @@ func (h *DomHandler) addNode(node *Node) {
 		}
 	}
 
-	if h.options != nil && h.options.WithStartIndices {
+	if h.options != nil && h.options.WithStartIndices && h.parser != nil {
 		node.StartIndex = h.parser.StartIndex
 	}
 
-	if h.options != nil && h.options.WithEndIndices {
+	if h.options != nil && h.options.WithEndIndices && h.parser != nil {
 		node.EndIndex = h.parser.EndIndex
 	}
 
