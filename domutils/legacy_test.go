@@ -7,6 +7,7 @@ import (
 	"github.com/krozhkov/go-htmlparser2/dom"
 	"github.com/krozhkov/go-htmlparser2/parser"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func prepareNode(node *dom.Node) *dom.Node {
@@ -22,9 +23,10 @@ func prepareNode(node *dom.Node) *dom.Node {
 }
 
 func TestLegacy(t *testing.T) {
-	var doc = prepareNode(
-		dom.ParseDocument(markup, &parser.ParserOptions{LowerCaseAttributeNames: true, DecodeEntities: true, RecognizeSelfClosing: true}),
-	)
+	d, err := dom.ParseDocument(markup, &parser.ParserOptions{LowerCaseAttributeNames: true, DecodeEntities: true, RecognizeSelfClosing: true})
+	require.Nil(t, err)
+
+	var doc = prepareNode(d)
 	var fixture = doc.Children
 
 	// Set up expected structures

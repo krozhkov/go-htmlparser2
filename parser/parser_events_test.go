@@ -1,11 +1,14 @@
 package parser
 
 import (
+	"io"
 	"log"
+	"strings"
 	"testing"
 
 	"github.com/gkampitakis/go-snaps/snaps"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 type TestEvent struct {
@@ -158,14 +161,27 @@ func runTest(t *testing.T, input string, options *ParserOptions) {
 		}
 	})
 
-	parser := NewParser(handler, options)
 	// First, try to run the test via chunks
-	for index := 0; index < len(input); index++ {
-		parser.Write([]byte{input[index]})
-	}
-	parser.End(nil)
+	r, w := io.Pipe()
+
+	go func() {
+		defer w.Close()
+		for index := 0; index < len(input); index++ {
+			_, err := w.Write([]byte{input[index]})
+			if err != nil {
+				t.Error(err)
+			}
+		}
+	}()
+
+	parser := NewParser(r, handler, options)
+	err := parser.Parse()
+	require.Nil(t, err)
+
 	// Then, parse everything
-	parser.ParseComplete([]byte(input))
+	parser.Reset(strings.NewReader(input))
+	err = parser.Parse()
+	require.Nil(t, err)
 }
 
 func TestEvents(t *testing.T) {

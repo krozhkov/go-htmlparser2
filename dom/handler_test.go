@@ -1,12 +1,15 @@
 package dom
 
 import (
+	"io"
+	"strings"
 	"testing"
 	"unicode/utf8"
 
 	"github.com/elliotchance/orderedmap/v3"
 	"github.com/krozhkov/go-htmlparser2/parser"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 type domHandlerTest struct {
@@ -413,18 +416,28 @@ func parseDh(t *testing.T, html string, dhOptions *DomHandlerOptions) []*Node {
 		LowerCaseTags: !xmlMode,
 	}
 
-	parser := parser.NewParser(handler, pOptions)
+	r, w := io.Pipe()
 
-	for _, cp := range html {
-		parser.Write(utf8.AppendRune([]byte{}, cp))
-	}
+	go func() {
+		defer w.Close()
+		for _, cp := range html {
+			_, err := w.Write(utf8.AppendRune([]byte{}, cp))
+			if err != nil {
+				t.Error(err)
+			}
+		}
+	}()
 
-	parser.End(nil)
+	parser := parser.NewParser(r, handler, pOptions)
+
+	err := parser.Parse()
+	require.Nil(t, err)
 
 	byChunks := prepareNode(handler.Root)
 
-	parser.Reset()
-	parser.End([]byte(html))
+	parser.Reset(strings.NewReader(html))
+	err = parser.Parse()
+	require.Nil(t, err)
 
 	result := prepareNode(handler.Root)
 

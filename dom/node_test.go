@@ -1,14 +1,16 @@
 package dom
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/gkampitakis/go-snaps/snaps"
 	"github.com/krozhkov/go-htmlparser2/parser"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
-func parse(data string, dhOptions *DomHandlerOptions) *Node {
+func parse(t *testing.T, data string, dhOptions *DomHandlerOptions) *Node {
 	handler := NewDomHandler(func(err error, _ []*Node) {
 		if err != nil {
 			panic(err)
@@ -20,9 +22,10 @@ func parse(data string, dhOptions *DomHandlerOptions) *Node {
 		pOptions = &parser.ParserOptions{XmlMode: dhOptions.XmlMode}
 	}
 
-	parser := parser.NewParser(handler, pOptions)
+	parser := parser.NewParser(strings.NewReader(data), handler, pOptions)
 
-	parser.End([]byte(data))
+	err := parser.Parse()
+	require.Nil(t, err)
 
 	return prepareNode(handler.Root)
 }
@@ -49,7 +52,7 @@ func prepareNode(node *Node) *Node {
 
 func TestNodes(t *testing.T) {
 	t.Run("should serialize to a Jest snapshot", func(t *testing.T) {
-		result := parse(
+		result := parse(t,
 			"<html><!-- A Comment --><title>The Title</title><body>Hello world<input disabled type=text></body></html>",
 			nil)
 
@@ -57,7 +60,7 @@ func TestNodes(t *testing.T) {
 	})
 
 	t.Run("should be cloneable", func(t *testing.T) {
-		result := parse(
+		result := parse(t,
 			`<html><!-- A Comment -->
                 <!doctype html>
                 <title>The Title</title>
@@ -73,7 +76,7 @@ func TestNodes(t *testing.T) {
 	})
 
 	t.Run("should not clone recursively if not asked to", func(t *testing.T) {
-		result := parse("<div foo=bar><div><div>", nil)
+		result := parse(t, "<div foo=bar><div><div>", nil)
 
 		clone, err := result.CloneNode(true)
 
@@ -89,7 +92,7 @@ func TestNodes(t *testing.T) {
 	})
 
 	t.Run("should clone startIndex and endIndex", func(t *testing.T) {
-		result := parse("<div foo=bar><div><div>", &DomHandlerOptions{WithStartIndices: true, WithEndIndices: true})
+		result := parse(t, "<div foo=bar><div><div>", &DomHandlerOptions{WithStartIndices: true, WithEndIndices: true})
 
 		var child *Node
 		if len(result.Children) > 0 {
@@ -118,7 +121,7 @@ func TestNodes(t *testing.T) {
 	})
 
 	t.Run("should detect tag types", func(t *testing.T) {
-		result := parse("<div foo=bar><div><div>", nil)
+		result := parse(t, "<div foo=bar><div><div>", nil)
 
 		var child *Node
 		if len(result.Children) > 0 {

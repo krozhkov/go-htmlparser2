@@ -6,11 +6,14 @@ import (
 	"github.com/krozhkov/go-htmlparser2/dom"
 	"github.com/krozhkov/go-htmlparser2/parser"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestHelpers(t *testing.T) {
 	t.Run("removeSubsets", func(t *testing.T) {
-		parsed := dom.ParseDocument("<div><p><span></span></p><p></p></div>", &parser.ParserOptions{LowerCaseAttributeNames: true, DecodeEntities: true, RecognizeSelfClosing: true})
+		parsed, err := dom.ParseDocument("<div><p><span></span></p><p></p></div>", &parser.ParserOptions{LowerCaseAttributeNames: true, DecodeEntities: true, RecognizeSelfClosing: true})
+		require.Nil(t, err)
+
 		node := parsed.Children[0]
 
 		t.Run("removes identical trees", func(t *testing.T) {

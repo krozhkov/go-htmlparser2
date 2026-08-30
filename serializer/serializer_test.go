@@ -6,6 +6,7 @@ import (
 	"github.com/krozhkov/go-htmlparser2/dom"
 	"github.com/krozhkov/go-htmlparser2/parser"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 type LoadingOptions struct {
@@ -15,12 +16,14 @@ type LoadingOptions struct {
 	emptyAttrs      *bool
 }
 
-func html(str string, opts *LoadingOptions) string {
+func html(t *testing.T, str string, opts *LoadingOptions) string {
 	parserOpts := parser.ParserOptions{XmlMode: false, LowerCaseAttributeNames: true, DecodeEntities: true, RecognizeSelfClosing: true}
 	if opts != nil && opts.decodeEntities != nil {
 		parserOpts.DecodeEntities = *opts.decodeEntities
 	}
-	nodes := dom.ParseDOM(str, &parserOpts)
+	nodes, err := dom.ParseDOM(str, &parserOpts)
+	require.Nil(t, err)
+
 	serializerOpts := DomSerializerOptions{}
 	if opts != nil && opts.decodeEntities != nil {
 		serializerOpts.DecodeEntities = opts.decodeEntities
@@ -44,8 +47,10 @@ func html(str string, opts *LoadingOptions) string {
 	return Render(nodes, &serializerOpts)
 }
 
-func xml(str string, opts *LoadingOptions) string {
-	nodes := dom.ParseDOM(str, &parser.ParserOptions{XmlMode: true})
+func xml(t *testing.T, str string, opts *LoadingOptions) string {
+	nodes, err := dom.ParseDOM(str, &parser.ParserOptions{XmlMode: true})
+	require.Nil(t, err)
+
 	serializerOpts := DomSerializerOptions{XmlMode: ptr("true")}
 	if opts != nil && opts.decodeEntities != nil {
 		serializerOpts.DecodeEntities = opts.decodeEntities
@@ -59,70 +64,70 @@ func xml(str string, opts *LoadingOptions) string {
 func TestHtmlParser2(t *testing.T) {
 	t.Run("should handle double quotes within single quoted attributes properly", func(t *testing.T) {
 		str := "<hr class='an \"edge\" case' />"
-		assert.Equal(t, `<hr class="an &quot;edge&quot; case">`, html(str, nil))
+		assert.Equal(t, `<hr class="an &quot;edge&quot; case">`, html(t, str, nil))
 	})
 
 	t.Run("should escape entities to utf8 if requested", func(t *testing.T) {
 		str := `<a href="a < b &quot; & c">& " &lt; &gt;</a>`
-		assert.Equal(t, `<a href="a < b &quot; &amp; c">&amp; " &lt; &gt;</a>`, html(str, &LoadingOptions{encodeEntities: ptr("utf8")}))
+		assert.Equal(t, `<a href="a < b &quot; &amp; c">&amp; " &lt; &gt;</a>`, html(t, str, &LoadingOptions{encodeEntities: ptr("utf8")}))
 	})
 
 	t.Run("should render <br /> tags correctly", func(t *testing.T) {
 		str := "<br />"
-		assert.Equal(t, str, html(str, &LoadingOptions{decodeEntities: ptr(false), selfClosingTags: ptr(true)}))
+		assert.Equal(t, str, html(t, str, &LoadingOptions{decodeEntities: ptr(false), selfClosingTags: ptr(true)}))
 	})
 
 	t.Run("should render childless SVG nodes with an explicit closing tag", func(t *testing.T) {
 		str := `<svg><circle x="12" y="12"></circle><path d="123M"></path><polygon points="60,20 100,40 100,80 60,100 20,80 20,40"></polygon></svg>`
-		assert.Equal(t, str, html(str, &LoadingOptions{decodeEntities: ptr(false), selfClosingTags: ptr(false)}))
+		assert.Equal(t, str, html(t, str, &LoadingOptions{decodeEntities: ptr(false), selfClosingTags: ptr(false)}))
 	})
 }
 
 func TestXml(t *testing.T) {
 	t.Run("should render CDATA correctly", func(t *testing.T) {
 		str := "<a> <b> <![CDATA[ asdf&asdf ]]> <c/> <![CDATA[ asdf&asdf ]]> </b> </a>"
-		assert.Equal(t, str, xml(str, nil))
+		assert.Equal(t, str, xml(t, str, nil))
 	})
 
 	t.Run("should append =\"\" to attributes with no value", func(t *testing.T) {
 		str := "<div dropdown-toggle>"
-		assert.Equal(t, `<div dropdown-toggle=""/>`, xml(str, nil))
+		assert.Equal(t, `<div dropdown-toggle=""/>`, xml(t, str, nil))
 	})
 
 	t.Run("should append =\"\" to boolean attributes with no value", func(t *testing.T) {
 		str := "<input disabled>"
-		assert.Equal(t, `<input disabled=""/>`, xml(str, nil))
+		assert.Equal(t, `<input disabled=""/>`, xml(t, str, nil))
 	})
 
 	t.Run("should preserve XML prefixes on attributes", func(t *testing.T) {
 		str := `<div xmlns:ex="http://example.com/ns"><p ex:ample="attribute">text</p></div>`
-		assert.Equal(t, str, xml(str, nil))
+		assert.Equal(t, str, xml(t, str, nil))
 	})
 
 	t.Run("should preserve mixed-case XML elements and attributes", func(t *testing.T) {
 		str := `<svg viewBox="0 0 8 8"><radialGradient/></svg>`
-		assert.Equal(t, str, xml(str, nil))
+		assert.Equal(t, str, xml(t, str, nil))
 	})
 
 	t.Run("should encode entities in otherwise special tags", func(t *testing.T) {
 		str := `<script>"<br/>"</script>`
-		assert.Equal(t, "<script>&quot;<br/>&quot;</script>", xml(str, nil))
+		assert.Equal(t, "<script>&quot;<br/>&quot;</script>", xml(t, str, nil))
 	})
 
 	t.Run("should not encode entities if disabled", func(t *testing.T) {
 		str := `<script>"<br/>"</script>`
-		assert.Equal(t, str, xml(str, &LoadingOptions{decodeEntities: ptr(false)}))
+		assert.Equal(t, str, xml(t, str, &LoadingOptions{decodeEntities: ptr(false)}))
 	})
 
 	t.Run("should render childless nodes with an explicit closing tag", func(t *testing.T) {
 		str := "<foo /><bar></bar>"
-		assert.Equal(t, "<foo></foo><bar></bar>", xml(str, &LoadingOptions{selfClosingTags: ptr(false)}))
+		assert.Equal(t, "<foo></foo><bar></bar>", xml(t, str, &LoadingOptions{selfClosingTags: ptr(false)}))
 	})
 }
 
 func TestHtml(t *testing.T) {
 	testBody(t, func(input string, opts *LoadingOptions) string {
-		return html(input, opts)
+		return html(t, input, opts)
 	})
 }
 
@@ -132,7 +137,7 @@ func TestHtmlDontDecodeEntities(t *testing.T) {
 			opts = &LoadingOptions{}
 		}
 		opts.decodeEntities = ptr(false)
-		return html(input, opts)
+		return html(t, input, opts)
 	})
 }
 

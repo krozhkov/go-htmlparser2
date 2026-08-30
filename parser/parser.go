@@ -2,8 +2,8 @@ package parser
 
 import (
 	"bytes"
-	"errors"
 	"fmt"
+	"io"
 	"slices"
 	"strings"
 	"unicode/utf8"
@@ -210,6 +210,23 @@ type Handler interface {
 	OnProcessingInstruction(name string, data string)
 }
 
+type noopHandler struct{}
+
+func (*noopHandler) OnParserInit(parser *Parser)                                 {}
+func (*noopHandler) OnReset()                                                    {}
+func (*noopHandler) OnEnd()                                                      {}
+func (*noopHandler) OnError(e error)                                             {}
+func (*noopHandler) OnCloseTag(name string, isImplied bool)                      {}
+func (*noopHandler) OnOpenTagName(name string)                                   {}
+func (*noopHandler) OnAttribute(name string, value string, quote QuoteType)      {}
+func (*noopHandler) OnOpenTag(name string, attribs []*Attribute, isImplied bool) {}
+func (*noopHandler) OnText(data string)                                          {}
+func (*noopHandler) OnComment(data string)                                       {}
+func (*noopHandler) OnCDataStart()                                               {}
+func (*noopHandler) OnCDataEnd()                                                 {}
+func (*noopHandler) OnCommentEnd()                                               {}
+func (*noopHandler) OnProcessingInstruction(name string, data string)            {}
+
 type Parser struct {
 	/** The start index of the last event. */
 	StartIndex int
@@ -236,16 +253,13 @@ type Parser struct {
 	/** We are parsing HTML. Inverse of the `xmlMode` option. */
 	htmlMode  bool
 	tokenizer *Tokenizer
-
-	buffers      [][]byte
-	bufferOffset int
-	/** The index of the last written buffer. Used when resuming after a `pause()`. */
-	writeIndex int
-	/** Indicates whether the parser has finished running / `.end` has been called. */
-	ended bool
 }
 
-func NewParser(cbs Handler, options *ParserOptions) *Parser {
+func NewParser(r io.Reader, cbs Handler, options *ParserOptions) *Parser {
+	if cbs == nil {
+		cbs = &noopHandler{}
+	}
+
 	var xmlMode bool
 	var decodeEntities bool
 	var lowerCaseTags bool
@@ -280,24 +294,19 @@ func NewParser(cbs Handler, options *ParserOptions) *Parser {
 		recognizeCDATA:          recognizeCDATA,
 		htmlMode:                !xmlMode,
 		tokenizer:               nil,
-		buffers:                 make([][]byte, 0, 10),
-		bufferOffset:            0,
-		writeIndex:              0,
-		ended:                   false,
 	}
 
 	if tokenizer != nil {
 		p.tokenizer = tokenizer
 	} else {
 		p.tokenizer = NewTokenizer(
+			r,
 			TokenizerOptions{XmlMode: xmlMode, DecodeEntities: decodeEntities},
 			p,
 		)
 	}
 
-	if p.cbs != nil {
-		p.cbs.OnParserInit(p)
-	}
+	p.cbs.OnParserInit(p)
 
 	return p
 }
@@ -608,9 +617,9 @@ func (p *Parser) OnEnd() {
 /**
 * Resets the parser to a blank state, ready to parse a new HTML document
  */
-func (p *Parser) Reset() {
+func (p *Parser) Reset(r io.Reader) {
 	p.cbs.OnReset()
-	p.tokenizer.Reset()
+	p.tokenizer.Reset(r)
 	p.tagname = ""
 	p.attribname = ""
 	p.attribs = nil
@@ -618,110 +627,23 @@ func (p *Parser) Reset() {
 	p.StartIndex = 0
 	p.EndIndex = 0
 	p.cbs.OnParserInit(p)
-	p.buffers = make([][]byte, 0, 10)
 	p.foreignContext = []bool{!p.htmlMode}
-	p.bufferOffset = 0
-	p.writeIndex = 0
-	p.ended = false
 }
 
 /**
-* Resets the parser, then parses a complete document and
+* Parses a complete document and
 * pushes it to the handler.
 *
 * @param data Document to parse.
  */
-func (p *Parser) ParseComplete(data []byte) {
-	p.Reset()
-	p.End(data)
+func (p *Parser) Parse() error {
+	err := p.tokenizer.Parse()
+	if err != nil {
+		p.cbs.OnError(err)
+	}
+	return err
 }
 
 func (p *Parser) getSlice(start, end int) []byte {
-	for start-p.bufferOffset >= len(p.buffers[0]) {
-		p.shiftBuffer()
-	}
-
-	actualEnd := end - p.bufferOffset
-	if actualEnd > len(p.buffers[0]) {
-		actualEnd = len(p.buffers[0])
-	}
-	slice := make([]byte, 0, end-start)
-	slice = append(slice, p.buffers[0][start-p.bufferOffset:actualEnd]...)
-
-	for end-p.bufferOffset > len(p.buffers[0]) {
-		p.shiftBuffer()
-		actualEnd = end - p.bufferOffset
-		if actualEnd > len(p.buffers[0]) {
-			actualEnd = len(p.buffers[0])
-		}
-		slice = append(slice, p.buffers[0][0:actualEnd]...)
-	}
-
-	return slice
-}
-
-func (p *Parser) shiftBuffer() {
-	p.bufferOffset += len(p.buffers[0])
-	p.writeIndex--
-	p.buffers[0] = nil
-	p.buffers = p.buffers[1:]
-}
-
-/**
-* Parses a chunk of data and calls the corresponding callbacks.
-*
-* @param chunk Chunk to parse.
- */
-func (p *Parser) Write(chunk []byte) {
-	if p.ended {
-		p.cbs.OnError(errors.New(".write() after done"))
-		return
-	}
-
-	p.buffers = append(p.buffers, chunk)
-	if p.tokenizer.running {
-		p.tokenizer.Write(chunk)
-		p.writeIndex++
-	}
-}
-
-/**
-* Parses the end of the buffer and clears the stack, calls onend.
-*
-* @param chunk Optional final chunk to parse.
- */
-func (p *Parser) End(chunk []byte) {
-	if p.ended {
-		p.cbs.OnError(errors.New(".end() after done"))
-		return
-	}
-
-	if chunk != nil {
-		p.Write(chunk)
-	}
-	p.ended = true
-	p.tokenizer.End()
-}
-
-/**
-* Pauses parsing. The parser won't emit events until `resume` is called.
- */
-func (p *Parser) Pause() {
-	p.tokenizer.Pause()
-}
-
-/**
-* Resumes parsing after `pause` was called.
- */
-func (p *Parser) Resume() {
-	p.tokenizer.Resume()
-
-	for p.tokenizer.running && p.writeIndex < len(p.buffers) {
-		p.tokenizer.Write(p.buffers[p.writeIndex])
-		p.writeIndex++
-	}
-
-	if p.ended {
-		p.tokenizer.End()
-	}
+	return p.tokenizer.GetSlice(start, end)
 }

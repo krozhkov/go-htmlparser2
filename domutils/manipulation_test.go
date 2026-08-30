@@ -18,8 +18,8 @@ func stringify(node *dom.Node) string {
 
 func TestManipulation(t *testing.T) {
 	t.Run("Append: should not be duplicated when called twice", func(t *testing.T) {
-		dom := parseDOM("<div><p><img/></p><p><object/></p></div>")[0]
-		child := parseDOM("<span></span>")[0]
+		dom := parseDOM(t, "<div><p><img/></p><p><object/></p></div>")[0]
+		child := parseDOM(t, "<span></span>")[0]
 		parents := dom.Children
 
 		Append(parents[0].Children[0], child)
@@ -35,8 +35,8 @@ func TestManipulation(t *testing.T) {
 	})
 
 	t.Run("AppendChild: should not be duplicated when called twice", func(t *testing.T) {
-		dom := parseDOM("<div><p><img/></p><p><object/></p></div>")[0]
-		child := parseDOM("<span></span>")[0]
+		dom := parseDOM(t, "<div><p><img/></p><p><object/></p></div>")[0]
+		child := parseDOM(t, "<span></span>")[0]
 		parents := dom.Children
 
 		AppendChild(parents[0], child)
@@ -52,7 +52,7 @@ func TestManipulation(t *testing.T) {
 	})
 
 	t.Run("RemoveElement: should correctly remove element", func(t *testing.T) {
-		dom := parseDOM("<div><p><img/><object/></p><p></p></div>")[0]
+		dom := parseDOM(t, "<div><p><img/><object/></p><p></p></div>")[0]
 		parents := dom.Children
 		image := parents[0].Children[0]
 
@@ -73,8 +73,8 @@ func TestManipulation(t *testing.T) {
 	})
 
 	t.Run("should not be duplicated when called twice", func(t *testing.T) {
-		dom := parseDOM("<div><p><img/></p><p><object/></p></div>")[0]
-		child := parseDOM("<span></span>")[0]
+		dom := parseDOM(t, "<div><p><img/></p><p><object/></p></div>")[0]
+		child := parseDOM(t, "<span></span>")[0]
 		parents := dom.Children
 		Prepend(parents[0].Children[0], child)
 
@@ -88,8 +88,8 @@ func TestManipulation(t *testing.T) {
 	})
 
 	t.Run("PrependChild: should not be duplicated when called twice", func(t *testing.T) {
-		dom := parseDOM("<div><p><img/></p><p><object/></p></div>")[0]
-		child := parseDOM("<span></span>")[0]
+		dom := parseDOM(t, "<div><p><img/></p><p><object/></p></div>")[0]
+		child := parseDOM(t, "<span></span>")[0]
 		parents := dom.Children
 
 		PrependChild(parents[0], child)
@@ -105,8 +105,8 @@ func TestManipulation(t *testing.T) {
 	})
 
 	t.Run("ReplaceElement: should allow replaced elements to be appended later (#966)", func(t *testing.T) {
-		div := parseDOM("<div><p>")[0]
-		template := parseDOM("<template></template>")[0]
+		div := parseDOM(t, "<div><p>")[0]
+		template := parseDOM(t, "<template></template>")[0]
 		p := div.Children[0]
 
 		// We want to wrap the inner <p> in a <template>

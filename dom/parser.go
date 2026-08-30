@@ -1,7 +1,7 @@
 package dom
 
 import (
-	"unsafe"
+	"strings"
 
 	"github.com/krozhkov/go-htmlparser2/parser"
 )
@@ -12,15 +12,15 @@ import (
  * @param data The data that should be parsed.
  * @param options Optional options for the parser and DOM handler.
  */
-func ParseDocument(data string, options *parser.ParserOptions) *Node {
+func ParseDocument(data string, options *parser.ParserOptions) (*Node, error) {
 	var domHandlerOptions *DomHandlerOptions
 	if options != nil {
 		domHandlerOptions = &DomHandlerOptions{XmlMode: options.XmlMode}
 	}
 	handler := NewDomHandler(nil, domHandlerOptions, nil)
-	parser := parser.NewParser(handler, options)
-	parser.End(unsafe.Slice(unsafe.StringData(data), len(data)))
-	return handler.Root
+	parser := parser.NewParser(strings.NewReader(data), handler, options)
+	err := parser.Parse()
+	return handler.Root, err
 }
 
 /**
@@ -33,7 +33,10 @@ func ParseDocument(data string, options *parser.ParserOptions) *Node {
  * @param options Optional options for the parser and DOM handler.
  * @deprecated Use `parseDocument` instead.
  */
-func ParseDOM(data string, options *parser.ParserOptions) []*Node {
-	node := ParseDocument(data, options)
-	return node.Children
+func ParseDOM(data string, options *parser.ParserOptions) ([]*Node, error) {
+	node, err := ParseDocument(data, options)
+	if err != nil {
+		return nil, err
+	}
+	return node.Children, nil
 }

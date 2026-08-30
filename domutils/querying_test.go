@@ -9,19 +9,23 @@ import (
 	"github.com/krozhkov/go-htmlparser2/dom"
 	"github.com/krozhkov/go-htmlparser2/parser"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
-func parseDocument(str string) *dom.Node {
+func parseDocument(str string) (*dom.Node, error) {
 	return dom.ParseDocument(str, &parser.ParserOptions{LowerCaseAttributeNames: true, DecodeEntities: true, RecognizeSelfClosing: true})
 }
 
 func TestQuerying(t *testing.T) {
-	manyNodesWide := parseDocument(
+	manyNodesWide, err := parseDocument(
 		fmt.Sprintf("<body>%sText</body>", strings.Repeat("<div></div>", 200_000)),
 	)
-	someDeepNodes := parseDocument(
+	require.Nil(t, err)
+
+	someDeepNodes, err := parseDocument(
 		`<body><div><div></div></div><div><p></p></div></body>`,
 	)
+	require.Nil(t, err)
 
 	t.Run("find", func(t *testing.T) {
 		t.Run("should accept many children without RangeError", func(t *testing.T) {
