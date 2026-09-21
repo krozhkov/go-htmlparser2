@@ -117,34 +117,33 @@ func isHtmlIntegrationElements(name string) bool {
 	}
 }
 
+/**
+ * Options for the streaming HTML/XML parser.
+ */
 type ParserOptions struct {
 	/**
 	 * Indicates whether special tags (`<script>`, `<style>`, and `<title>`) should get special treatment
 	 * and if "empty" tags (eg. `<br>`) can have children.  If `false`, the content of special tags
 	 * will be text only. For feeds and other XML content (documents that don't consist of HTML),
 	 * set this to `true`.
-	 *
 	 * @default false
 	 */
 	XmlMode bool
 
 	/**
 	 * Decode entities within the document.
-	 *
 	 * @default true
 	 */
 	DecodeEntities bool
 
 	/**
 	 * If set to true, all tags will be lowercased.
-	 *
 	 * @default !xmlMode
 	 */
 	LowerCaseTags bool
 
 	/**
 	 * If set to `true`, all attribute names will be lowercased. This has noticeable impact on speed.
-	 *
 	 * @default !xmlMode
 	 */
 	LowerCaseAttributeNames bool
@@ -152,7 +151,6 @@ type ParserOptions struct {
 	/**
 	 * If set to true, CDATA sections will be recognized as text even if the xmlMode option is not enabled.
 	 * NOTE: If xmlMode is set to `true` then CDATA sections will always be recognized as text.
-	 *
 	 * @default xmlMode
 	 */
 	RecognizeCDATA bool
@@ -160,7 +158,6 @@ type ParserOptions struct {
 	/**
 	 * If set to `true`, self-closing tags will trigger the onclosetag event even if xmlMode is not set to `true`.
 	 * NOTE: If xmlMode is set to `true` then self-closing tags will always be recognized.
-	 *
 	 * @default xmlMode
 	 */
 	RecognizeSelfClosing bool
@@ -171,6 +168,9 @@ type ParserOptions struct {
 	Tokenizer *Tokenizer
 }
 
+/**
+ * Parser callback interface used by the tokenizer.
+ */
 type Handler interface {
 	OnParserInit(parser *Parser)
 
@@ -227,6 +227,9 @@ func (*noopHandler) OnCDataEnd()                                                
 func (*noopHandler) OnCommentEnd()                                               {}
 func (*noopHandler) OnProcessingInstruction(name string, data string)            {}
 
+/**
+ * Incremental parser implementation.
+ */
 type Parser struct {
 	/** The start index of the last event. */
 	StartIndex int
@@ -313,7 +316,11 @@ func NewParser(r io.Reader, cbs Handler, options *ParserOptions) *Parser {
 
 // Tokenizer event handlers
 
-/** @internal */
+/**
+* @param start Start index for the current parser event.
+* @param endIndex End index for the current parser event.
+* @internal
+ */
 func (p *Parser) OnText(start, endIndex int) {
 	data := p.getSlice(start, endIndex)
 	p.EndIndex = endIndex - 1
@@ -321,7 +328,11 @@ func (p *Parser) OnText(start, endIndex int) {
 	p.StartIndex = endIndex
 }
 
-/** @internal */
+/**
+* @param cp Current Unicode code point.
+* @param endIndex End index for the current parser event.
+* @internal
+ */
 func (p *Parser) OnTextEntity(cp rune, endIndex int) {
 	p.EndIndex = endIndex - 1
 	p.cbs.OnText(string(cp))
@@ -331,6 +342,7 @@ func (p *Parser) OnTextEntity(cp rune, endIndex int) {
 /**
 * Checks if the current tag is a void element. Override this if you want
 * to specify your own additional void elements.
+* @param name Name of the pseudo selector.
  */
 func (p *Parser) isVoidElement(name string) bool {
 	if !p.htmlMode {
@@ -363,7 +375,11 @@ func (p *Parser) isVoidElement(name string) bool {
 	}
 }
 
-/** @internal */
+/**
+* @param start Start index for the current parser event.
+* @param endIndex End index for the current parser event.
+* @internal
+ */
 func (p *Parser) OnOpenTagName(start, endIndex int) {
 	p.EndIndex = endIndex
 
@@ -418,7 +434,10 @@ func (p *Parser) endOpenTag(isImplied bool) {
 	p.tagname = ""
 }
 
-/** @internal */
+/**
+* @param endIndex End index for the current parser event.
+* @internal
+ */
 func (p *Parser) OnOpenTagEnd(endIndex int) {
 	p.EndIndex = endIndex
 	p.endOpenTag(false)
@@ -427,7 +446,11 @@ func (p *Parser) OnOpenTagEnd(endIndex int) {
 	p.StartIndex = endIndex + 1
 }
 
-/** @internal */
+/**
+ * @param start Start index for the current parser event.
+ * @param endIndex End index for the current parser event.
+ * @internal
+ */
 func (p *Parser) OnCloseTag(start, endIndex int) {
 	p.EndIndex = endIndex
 
@@ -468,7 +491,10 @@ func (p *Parser) OnCloseTag(start, endIndex int) {
 	p.StartIndex = endIndex + 1
 }
 
-/** @internal */
+/**
+ * @param endIndex End index for the current parser event.
+ * @internal
+ */
 func (p *Parser) OnSelfClosingTag(endIndex int) {
 	p.EndIndex = endIndex
 	if p.recognizeSelfClosing || p.foreignContext[0] {
@@ -494,7 +520,11 @@ func (p *Parser) closeCurrentTag(isOpenImplied bool) {
 	}
 }
 
-/** @internal */
+/**
+ * @param start Start index for the current parser event.
+ * @param endIndex End index for the current parser event.
+ * @internal
+ */
 func (p *Parser) OnAttribName(start, endIndex int) {
 	p.StartIndex = start
 	name := string(p.getSlice(start, endIndex))
@@ -506,17 +536,28 @@ func (p *Parser) OnAttribName(start, endIndex int) {
 	}
 }
 
-/** @internal */
+/**
+ * @param start Start index for the current parser event.
+ * @param endIndex End index for the current parser event.
+ * @internal
+ */
 func (p *Parser) OnAttribData(start, endIndex int) {
 	p.attribvalue = append(p.attribvalue, p.getSlice(start, endIndex)...)
 }
 
-/** @internal */
+/**
+ * @param cp Current Unicode code point.
+ * @internal
+ */
 func (p *Parser) OnAttribEntity(cp rune) {
 	p.attribvalue = utf8.AppendRune(p.attribvalue, cp)
 }
 
-/** @internal */
+/**
+ * @param quote Quote type used for the current attribute.
+ * @param endIndex End index for the current parser event.
+ * @internal
+ */
 func (p *Parser) OnAttribEnd(quote QuoteType, endIndex int) {
 	p.EndIndex = endIndex
 	attribvalue := string(p.attribvalue)
@@ -550,7 +591,11 @@ func (p *Parser) getInstructionName(value []byte) []byte {
 	return name
 }
 
-/** @internal */
+/**
+ * @param start Start index for the current parser event.
+ * @param endIndex End index for the current parser event.
+ * @internal
+ */
 func (p *Parser) OnDeclaration(start, endIndex int) {
 	p.EndIndex = endIndex
 	value := p.getSlice(start, endIndex)
@@ -562,7 +607,11 @@ func (p *Parser) OnDeclaration(start, endIndex int) {
 	p.StartIndex = endIndex + 1
 }
 
-/** @internal */
+/**
+ * @param start Start index for the current parser event.
+ * @param endIndex End index for the current parser event.
+ * @internal
+ */
 func (p *Parser) OnProcessingInstruction(start, endIndex int) {
 	p.EndIndex = endIndex
 	value := p.getSlice(start, endIndex)
@@ -574,7 +623,12 @@ func (p *Parser) OnProcessingInstruction(start, endIndex int) {
 	p.StartIndex = endIndex + 1
 }
 
-/** @internal */
+/**
+ * @param start Start index for the current parser event.
+ * @param endIndex End index for the current parser event.
+ * @param offset Offset applied when computing parser indices.
+ * @internal
+ */
 func (p *Parser) OnComment(start, endIndex, offset int) {
 	p.EndIndex = endIndex
 
@@ -585,7 +639,12 @@ func (p *Parser) OnComment(start, endIndex, offset int) {
 	p.StartIndex = endIndex + 1
 }
 
-/** @internal */
+/**
+ * @param start Start index for the current parser event.
+ * @param endIndex End index for the current parser event.
+ * @param offset Offset applied when computing parser indices.
+ * @internal
+ */
 func (p *Parser) OnCData(start, endIndex, offset int) {
 	p.EndIndex = endIndex
 	value := p.getSlice(start, endIndex-offset)

@@ -357,6 +357,22 @@ func TestEvents(t *testing.T) {
 		runTest(t, "<script><</script>", &ParserOptions{XmlMode: false, DecodeEntities: true, LowerCaseTags: true, LowerCaseAttributeNames: true})
 	})
 
+	t.Run("Special end tags ending with /> in script", func(t *testing.T) {
+		runTest(t, "<script>safe</script/><img>", &ParserOptions{XmlMode: false, DecodeEntities: true, LowerCaseTags: true, LowerCaseAttributeNames: true})
+	})
+
+	t.Run("Special end tags ending with /> in style", func(t *testing.T) {
+		runTest(t, "<style>safe</style/><img>", &ParserOptions{XmlMode: false, DecodeEntities: true, LowerCaseTags: true, LowerCaseAttributeNames: true})
+	})
+
+	t.Run("Special end tags ending with /> in title", func(t *testing.T) {
+		runTest(t, "<title>safe</title/><img>", &ParserOptions{XmlMode: false, DecodeEntities: true, LowerCaseTags: true, LowerCaseAttributeNames: true})
+	})
+
+	t.Run("Special end tags ending with /> in textarea", func(t *testing.T) {
+		runTest(t, "<textarea>safe</textarea/><img>", &ParserOptions{XmlMode: false, DecodeEntities: true, LowerCaseTags: true, LowerCaseAttributeNames: true})
+	})
+
 	t.Run("CDATA more edge-cases", func(t *testing.T) {
 		runTest(t, "<![CDATA[foo]bar]>baz]]>", &ParserOptions{XmlMode: false, DecodeEntities: true, LowerCaseTags: true, LowerCaseAttributeNames: true, RecognizeCDATA: true})
 	})

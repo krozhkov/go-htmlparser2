@@ -2,6 +2,12 @@
 
 Go port of htmlparser2: The fast &amp; forgiving HTML and XML parser
 
+**The current codebase is synchronized and corresponds to the following original package versions:**
+* `htmlparser` 11.0.0
+* `domutils` 3.2.2
+* `dom-serializer` 2.0.0
+* `domhandler` 5.0.3
+
 ## License
 
 This project is licensed under the [MIT License](LICENSE).

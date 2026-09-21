@@ -805,3 +805,284 @@
     },
 }
 ---
+
+[TestTokenizer/should_close_special_tags_on_end_tags_ending_with_/>/for_script_tag - 1]
+[][]interface {}{
+    {
+        "OnOpenTagName",
+        int(1),
+        int(7),
+    },
+    {
+        "OnOpenTagEnd",
+        int(7),
+    },
+    {
+        "OnText",
+        int(8),
+        int(12),
+    },
+    {
+        "OnCloseTag",
+        int(14),
+        int(20),
+    },
+    {
+        "OnOpenTagName",
+        int(23),
+        int(26),
+    },
+    {
+        "OnOpenTagEnd",
+        int(26),
+    },
+    {
+        "OnEnd",
+    },
+}
+---
+
+[TestTokenizer/should_close_special_tags_on_end_tags_ending_with_/>/for_style_tag - 1]
+[][]interface {}{
+    {
+        "OnOpenTagName",
+        int(1),
+        int(6),
+    },
+    {
+        "OnOpenTagEnd",
+        int(6),
+    },
+    {
+        "OnText",
+        int(7),
+        int(11),
+    },
+    {
+        "OnCloseTag",
+        int(13),
+        int(18),
+    },
+    {
+        "OnOpenTagName",
+        int(21),
+        int(24),
+    },
+    {
+        "OnOpenTagEnd",
+        int(24),
+    },
+    {
+        "OnEnd",
+    },
+}
+---
+
+[TestTokenizer/should_close_special_tags_on_end_tags_ending_with_/>/for_textarea_tag - 1]
+[][]interface {}{
+    {
+        "OnOpenTagName",
+        int(1),
+        int(9),
+    },
+    {
+        "OnOpenTagEnd",
+        int(9),
+    },
+    {
+        "OnText",
+        int(10),
+        int(14),
+    },
+    {
+        "OnCloseTag",
+        int(16),
+        int(24),
+    },
+    {
+        "OnOpenTagName",
+        int(27),
+        int(30),
+    },
+    {
+        "OnOpenTagEnd",
+        int(30),
+    },
+    {
+        "OnEnd",
+    },
+}
+---
+
+[TestTokenizer/should_close_special_tags_on_end_tags_ending_with_/>/for_title_tag - 1]
+[][]interface {}{
+    {
+        "OnOpenTagName",
+        int(1),
+        int(6),
+    },
+    {
+        "OnOpenTagEnd",
+        int(6),
+    },
+    {
+        "OnText",
+        int(7),
+        int(11),
+    },
+    {
+        "OnCloseTag",
+        int(13),
+        int(18),
+    },
+    {
+        "OnOpenTagName",
+        int(21),
+        int(24),
+    },
+    {
+        "OnOpenTagEnd",
+        int(24),
+    },
+    {
+        "OnEnd",
+    },
+}
+---
+
+[TestTokenizer/should_close_comments_on_--!> - 1]
+[][]interface {}{
+    {
+        "OnComment",
+        int(4),
+        int(8),
+        int(3),
+    },
+    {
+        "OnOpenTagName",
+        int(10),
+        int(13),
+    },
+    {
+        "OnAttribName",
+        int(14),
+        int(17),
+    },
+    {
+        "OnAttribData",
+        int(18),
+        int(19),
+    },
+    {
+        "OnAttribEnd",
+        parser.QuoteType(1),
+        int(19),
+    },
+    {
+        "OnAttribName",
+        int(20),
+        int(27),
+    },
+    {
+        "OnAttribData",
+        int(28),
+        int(36),
+    },
+    {
+        "OnAttribEnd",
+        parser.QuoteType(1),
+        int(36),
+    },
+    {
+        "OnOpenTagEnd",
+        int(36),
+    },
+    {
+        "OnText",
+        int(37),
+        int(40),
+    },
+    {
+        "OnEnd",
+    },
+}
+---
+
+[TestTokenizer/should_not_treat_<!-->__as_a_complete_comment_in_xmlMode - 1]
+[][]interface {}{
+    {
+        "OnOpenTagName",
+        int(1),
+        int(5),
+    },
+    {
+        "OnOpenTagEnd",
+        int(5),
+    },
+    {
+        "OnOpenTagName",
+        int(7),
+        int(11),
+    },
+    {
+        "OnOpenTagEnd",
+        int(11),
+    },
+    {
+        "OnText",
+        int(12),
+        int(17),
+    },
+    {
+        "OnCloseTag",
+        int(19),
+        int(23),
+    },
+    {
+        "OnComment",
+        int(28),
+        int(58),
+        int(2),
+    },
+    {
+        "OnOpenTagName",
+        int(60),
+        int(64),
+    },
+    {
+        "OnOpenTagEnd",
+        int(64),
+    },
+    {
+        "OnText",
+        int(65),
+        int(68),
+    },
+    {
+        "OnCloseTag",
+        int(70),
+        int(74),
+    },
+    {
+        "OnCloseTag",
+        int(77),
+        int(81),
+    },
+    {
+        "OnEnd",
+    },
+}
+---
+
+[TestTokenizer/should_terminate_XML_processing_instructions_on_?> - 1]
+[][]interface {}{
+    {
+        "OnProcessingInstruction",
+        int(2),
+        int(25),
+    },
+    {
+        "OnEnd",
+    },
+}
+---

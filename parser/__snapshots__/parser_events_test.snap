@@ -3901,3 +3901,279 @@
     },
 }
 ---
+
+[TestEvents/Special_end_tags_ending_with_/>_in_script - 1]
+[]parser.TestEvent{
+    {
+        event: "opentagname",
+        data:  {
+            "script",
+        },
+        endIndex:   7,
+        startIndex: 0,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "script",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   7,
+        startIndex: 0,
+    },
+    {
+        event: "text",
+        data:  {
+            "safe",
+        },
+        endIndex:   11,
+        startIndex: 8,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "script",
+            bool(false),
+        },
+        endIndex:   20,
+        startIndex: 12,
+    },
+    {
+        event: "opentagname",
+        data:  {
+            "img",
+        },
+        endIndex:   26,
+        startIndex: 21,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "img",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   26,
+        startIndex: 21,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "img",
+            bool(true),
+        },
+        endIndex:   26,
+        startIndex: 21,
+    },
+}
+---
+
+[TestEvents/Special_end_tags_ending_with_/>_in_style - 1]
+[]parser.TestEvent{
+    {
+        event: "opentagname",
+        data:  {
+            "style",
+        },
+        endIndex:   6,
+        startIndex: 0,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "style",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   6,
+        startIndex: 0,
+    },
+    {
+        event: "text",
+        data:  {
+            "safe",
+        },
+        endIndex:   10,
+        startIndex: 7,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "style",
+            bool(false),
+        },
+        endIndex:   18,
+        startIndex: 11,
+    },
+    {
+        event: "opentagname",
+        data:  {
+            "img",
+        },
+        endIndex:   24,
+        startIndex: 19,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "img",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   24,
+        startIndex: 19,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "img",
+            bool(true),
+        },
+        endIndex:   24,
+        startIndex: 19,
+    },
+}
+---
+
+[TestEvents/Special_end_tags_ending_with_/>_in_textarea - 1]
+[]parser.TestEvent{
+    {
+        event: "opentagname",
+        data:  {
+            "textarea",
+        },
+        endIndex:   9,
+        startIndex: 0,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "textarea",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   9,
+        startIndex: 0,
+    },
+    {
+        event: "text",
+        data:  {
+            "safe",
+        },
+        endIndex:   13,
+        startIndex: 10,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "textarea",
+            bool(false),
+        },
+        endIndex:   24,
+        startIndex: 14,
+    },
+    {
+        event: "opentagname",
+        data:  {
+            "img",
+        },
+        endIndex:   30,
+        startIndex: 25,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "img",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   30,
+        startIndex: 25,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "img",
+            bool(true),
+        },
+        endIndex:   30,
+        startIndex: 25,
+    },
+}
+---
+
+[TestEvents/Special_end_tags_ending_with_/>_in_title - 1]
+[]parser.TestEvent{
+    {
+        event: "opentagname",
+        data:  {
+            "title",
+        },
+        endIndex:   6,
+        startIndex: 0,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "title",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   6,
+        startIndex: 0,
+    },
+    {
+        event: "text",
+        data:  {
+            "safe",
+        },
+        endIndex:   10,
+        startIndex: 7,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "title",
+            bool(false),
+        },
+        endIndex:   18,
+        startIndex: 11,
+    },
+    {
+        event: "opentagname",
+        data:  {
+            "img",
+        },
+        endIndex:   24,
+        startIndex: 19,
+    },
+    {
+        event: "opentag",
+        data:  {
+            "img",
+            []*parser.Attribute{
+            },
+            bool(false),
+        },
+        endIndex:   24,
+        startIndex: 19,
+    },
+    {
+        event: "closetag",
+        data:  {
+            "img",
+            bool(true),
+        },
+        endIndex:   24,
+        startIndex: 19,
+    },
+}
+---

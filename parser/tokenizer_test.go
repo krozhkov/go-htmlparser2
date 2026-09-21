@@ -128,6 +128,21 @@ func TestTokenizer(t *testing.T) {
 		})
 	})
 
+	t.Run("should close special tags on end tags ending with />", func(t *testing.T) {
+		t.Run("for script tag", func(t *testing.T) {
+			snaps.MatchSnapshot(t, tokenize(t, "<script>safe</script/><img>", TokenizerOptions{}))
+		})
+		t.Run("for style tag", func(t *testing.T) {
+			snaps.MatchSnapshot(t, tokenize(t, "<style>safe</style/><img>", TokenizerOptions{}))
+		})
+		t.Run("for title tag", func(t *testing.T) {
+			snaps.MatchSnapshot(t, tokenize(t, "<title>safe</title/><img>", TokenizerOptions{}))
+		})
+		t.Run("for textarea tag", func(t *testing.T) {
+			snaps.MatchSnapshot(t, tokenize(t, "<textarea>safe</textarea/><img>", TokenizerOptions{}))
+		})
+	})
+
 	t.Run("should correctly mark attributes", func(t *testing.T) {
 		t.Run("for no value attribute", func(t *testing.T) {
 			snaps.MatchSnapshot(t, tokenize(t, "<div aaaaaaa >", TokenizerOptions{}))
@@ -168,5 +183,17 @@ func TestTokenizer(t *testing.T) {
 		t.Run("for multi-byte entities", func(t *testing.T) {
 			snaps.MatchSnapshot(t, tokenize(t, "&NotGreaterFullEqual;", TokenizerOptions{DecodeEntities: true}))
 		})
+	})
+
+	t.Run("should close comments on --!>", func(t *testing.T) {
+		snaps.MatchSnapshot(t, tokenize(t, "<!-- --!><img src=x onerror=alert(1)>-->", TokenizerOptions{}))
+	})
+
+	t.Run("should not treat <!-->  as a complete comment in xmlMode", func(t *testing.T) {
+		snaps.MatchSnapshot(t, tokenize(t, "<root><node>start</node><!--><node>should ignore</node><--><node>end</node></root>", TokenizerOptions{XmlMode: true}))
+	})
+
+	t.Run("should terminate XML processing instructions on ?>", func(t *testing.T) {
+		snaps.MatchSnapshot(t, tokenize(t, "<?target data > injected ?>", TokenizerOptions{XmlMode: true}))
 	})
 }

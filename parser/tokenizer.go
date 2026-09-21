@@ -102,6 +102,9 @@ func isASCIIAlpha(c byte) bool {
 		(c >= UpperA && c <= UpperZ)
 }
 
+/**
+ * Quote style used for parsed attributes.
+ */
 type QuoteType int
 
 const (
@@ -111,6 +114,9 @@ const (
 	QuoteTypeDouble
 )
 
+/**
+ * Low-level tokenizer callback interface.
+ */
 type Callbacks interface {
 	OnAttribData(start, endIndex int)
 	OnAttribEntity(codepoint rune)
@@ -154,6 +160,7 @@ func (*noopCallbacks) OnTextEntity(codepoint rune, endIndex int)   {}
  * sequences with an increased offset.
  */
 var Sequences = struct {
+	Empty       []byte
 	Cdata       []byte
 	CdataEnd    []byte
 	CommentEnd  []byte
@@ -163,9 +170,10 @@ var Sequences = struct {
 	TextareaEnd []byte
 	XmpEnd      []byte
 }{
+	Empty:       []byte{},
 	Cdata:       []byte{0x43, 0x44, 0x41, 0x54, 0x41, 0x5b},                         // CDATA[
 	CdataEnd:    []byte{0x5d, 0x5d, 0x3e},                                           // ]]>
-	CommentEnd:  []byte{0x2d, 0x2d, 0x3e},                                           // `-->`
+	CommentEnd:  []byte{0x2d, 0x2d, 0x21, 0x3e},                                     // `--!>`
 	ScriptEnd:   []byte{0x3c, 0x2f, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74},             // `</script`
 	StyleEnd:    []byte{0x3c, 0x2f, 0x73, 0x74, 0x79, 0x6c, 0x65},                   // `</style`
 	TitleEnd:    []byte{0x3c, 0x2f, 0x74, 0x69, 0x74, 0x6c, 0x65},                   // `</title`
@@ -179,6 +187,9 @@ type TokenizerOptions struct {
 	MaxBuf         int
 }
 
+/**
+ * Tokenizer implementation used by `Parser`.
+ */
 type Tokenizer struct {
 	/** The current state the tokenizer is in. */
 	state State
@@ -232,19 +243,20 @@ func NewTokenizer(r io.Reader, options TokenizerOptions, cbs Callbacks) *Tokeniz
 	}
 
 	t := &Tokenizer{
-		r:              r,
-		state:          StateText,
-		buffer:         make([]byte, 0, 4096),
-		sectionStart:   0,
-		index:          0,
-		entityStart:    0,
-		baseState:      StateText,
-		isSpecial:      false,
-		sequenceIndex:  0,
-		xmlMode:        options.XmlMode,
-		decodeEntities: options.DecodeEntities,
-		cbs:            cbs,
-		maxBuf:         options.MaxBuf,
+		r:               r,
+		state:           StateText,
+		buffer:          make([]byte, 0, 4096),
+		sectionStart:    0,
+		index:           0,
+		entityStart:     0,
+		baseState:       StateText,
+		isSpecial:       false,
+		currentSequence: Sequences.Empty,
+		sequenceIndex:   0,
+		xmlMode:         options.XmlMode,
+		decodeEntities:  options.DecodeEntities,
+		cbs:             cbs,
+		maxBuf:          options.MaxBuf,
 	}
 
 	var decodeTree []uint16
@@ -360,7 +372,7 @@ func (t *Tokenizer) Reset(r io.Reader) {
 	t.entityStart = 0
 	t.index = 0
 	t.baseState = StateText
-	t.currentSequence = nil
+	t.currentSequence = Sequences.Empty
 	t.err = nil
 	t.readErr = nil
 }
@@ -400,10 +412,13 @@ func (t *Tokenizer) stateSpecialStartSequence(c byte) {
 	t.stateInTagName(c)
 }
 
-/** Look for an end tag. For <title> tags, also decode entities. */
+/**
+ * Look for an end tag. For <title> tags, also decode entities.
+ * @param c Current character code point.
+ */
 func (t *Tokenizer) stateInSpecialTag(c byte) {
 	if t.sequenceIndex == len(t.currentSequence) {
-		if c == Gt || isWhitespace(c) {
+		if isEndOfTagSection(c) {
 			endOfText := t.index - len(t.currentSequence)
 
 			if t.sectionStart < endOfText {
@@ -464,7 +479,7 @@ func (t *Tokenizer) stateCDATASequence(c byte) {
 /**
 * When we wait for one specific character, we can speed things up
 * by skipping through the buffer until we find it.
-*
+* @param c Current character code point.
 * @returns Whether the character was found.
  */
 func (t *Tokenizer) fastForwardTo(c byte) bool {
@@ -497,15 +512,28 @@ func (t *Tokenizer) fastForwardTo(c byte) bool {
 * - Their end sequences have a distinct character they start with.
 * - That character is then repeated, so we have to check multiple repeats.
 * - All characters but the start character of the sequence can be skipped.
+* @param c Current character code point.
  */
 func (t *Tokenizer) stateInCommentLike(c byte) {
-	if c == t.currentSequence[t.sequenceIndex] {
+	if bytes.Equal(t.currentSequence, Sequences.CommentEnd) && t.sequenceIndex == 2 && c == Gt {
+		// `!` is optional here, so the same sequence also accepts `-->`.
+		t.cbs.OnComment(t.streamOffset+t.sectionStart, t.streamOffset+t.index, 2)
+
+		t.sequenceIndex = 0
+		t.sectionStart = t.index + 1
+		t.state = StateText
+	} else if bytes.Equal(t.currentSequence, Sequences.CommentEnd) && t.sequenceIndex == len(t.currentSequence)-1 && c != Gt {
+		t.sequenceIndex = 0
+		if c == Dash {
+			t.sequenceIndex = 1
+		}
+	} else if c == t.currentSequence[t.sequenceIndex] {
 		t.sequenceIndex++
 		if t.sequenceIndex == len(t.currentSequence) {
 			if bytes.Equal(t.currentSequence, Sequences.CdataEnd) {
 				t.cbs.OnCData(t.streamOffset+t.sectionStart, t.streamOffset+t.index, 2)
 			} else {
-				t.cbs.OnComment(t.streamOffset+t.sectionStart, t.streamOffset+t.index, 2)
+				t.cbs.OnComment(t.streamOffset+t.sectionStart, t.streamOffset+t.index, 3)
 			}
 
 			t.sequenceIndex = 0
@@ -528,6 +556,7 @@ func (t *Tokenizer) stateInCommentLike(c byte) {
 *
 * XML allows a lot more characters here (@see https://www.w3.org/TR/REC-xml/#NT-NameStartChar).
 * We allow anything that wouldn't end the tag.
+* @param c Current character code point.
  */
 func (t *Tokenizer) isTagStartChar(c byte) bool {
 	if t.xmlMode {
@@ -550,6 +579,7 @@ func (t *Tokenizer) stateBeforeTagName(c byte) {
 		t.sectionStart = t.index + 1
 	} else if c == Questionmark {
 		t.state = StateInProcessingInstruction
+		t.sequenceIndex = 0
 		t.sectionStart = t.index + 1
 	} else if t.isTagStartChar(c) {
 		lower := c | 0x20
@@ -597,7 +627,7 @@ func (t *Tokenizer) stateBeforeClosingTagName(c byte) {
 }
 
 func (t *Tokenizer) stateInClosingTagName(c byte) {
-	if c == Gt || isWhitespace(c) {
+	if isEndOfTagSection(c) {
 		t.cbs.OnCloseTag(t.streamOffset+t.sectionStart, t.streamOffset+t.index)
 		t.sectionStart = -1
 		t.state = StateAfterClosingTagName
@@ -740,7 +770,23 @@ func (t *Tokenizer) stateInDeclaration(c byte) {
 }
 
 func (t *Tokenizer) stateInProcessingInstruction(c byte) {
-	if c == Gt || t.fastForwardTo(Gt) {
+	if t.xmlMode {
+		if c == Questionmark {
+			// Remember that we just consumed `?`, so the next `>` closes the PI.
+			t.sequenceIndex = 1
+		} else if c == Gt && t.sequenceIndex == 1 {
+			t.cbs.OnProcessingInstruction(t.streamOffset+t.sectionStart, t.streamOffset+t.index-1)
+			t.sequenceIndex = 0
+			t.state = StateText
+			t.sectionStart = t.index + 1
+		} else {
+			// Keep scanning for the next `?`, which can start a closing `?>`.
+			t.sequenceIndex = 0
+			if t.fastForwardTo(Questionmark) {
+				t.sequenceIndex = 1
+			}
+		}
+	} else if c == Gt || t.fastForwardTo(Gt) {
 		t.cbs.OnProcessingInstruction(t.streamOffset+t.sectionStart, t.streamOffset+t.index)
 		t.state = StateText
 		t.sectionStart = t.index + 1
@@ -751,8 +797,14 @@ func (t *Tokenizer) stateBeforeComment(c byte) {
 	if c == Dash {
 		t.state = StateInCommentLike
 		t.currentSequence = Sequences.CommentEnd
-		// Allow short comments (eg. <!-->)
+		/*
+		 * In HTML, `<!-->` is a valid empty comment. In XML, comments
+		 * must be closed by `-->`, so we require the full sequence.
+		 */
 		t.sequenceIndex = 2
+		if t.xmlMode {
+			t.sequenceIndex = 0
+		}
 		t.sectionStart = t.index + 1
 	} else {
 		t.state = StateInDeclaration
@@ -832,9 +884,15 @@ func (t *Tokenizer) stateInEntity() {
 		t.state = t.baseState
 
 		if length == 0 {
-			t.index = t.entityStart
+			t.index -= 1
 		}
 	} else {
+		if t.index < len(t.buffer) && t.buffer[t.index] == Amp {
+			t.state = t.baseState
+			t.index -= 1
+			return
+		}
+
 		// Mark buffer as consumed.
 		t.index = len(t.buffer) - 1
 	}
